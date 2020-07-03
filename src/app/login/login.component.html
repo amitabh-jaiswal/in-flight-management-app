@@ -1,0 +1,36 @@
+<div class="container-fluid">
+  <div class="row mt-5">
+    <div class="col-sm-10 col-md-8 col-lg-4 offset-sm-1 offset-md-2 offset-lg-4">
+      <app-card title="Login">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <mat-form-field class="input-full-width" appearance="outline">
+              <mat-label>Email</mat-label>
+              <input id="email" matInput placeholder="abc@example.com" [errorStateMatcher]="matcher" formControlName="email">
+              <!-- <span *ngIf="email.invalid && (email.dirty || email.touched)"> -->
+              <mat-error *ngIf="email.errors && email.errors.required">Email is Required.</mat-error>
+              <mat-error *ngIf=" email.errors && email.errors.email">Invalid Email Format.</mat-error>
+              <!-- </span> -->
+            </mat-form-field>
+            <!-- </div> -->
+            <!-- <div class="form-group"> -->
+            <mat-form-field class="input-full-width" appearance="outline">
+              <mat-label>Password</mat-label>
+              <input id="password" matInput [type]="hide ? 'password' : 'text'" formControlName="password"
+                [errorStateMatcher]="matcher">
+              <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="hide">
+                <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+              <mat-error *ngIf="password.errors && password.errors.required">Password is Required.</mat-error>
+              <mat-error *ngIf=" password.errors && password.errors.minlength">Password should be greater than 8.
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <button type="submit" name="login-button" color="primary" [disabled]="loginForm.invalid" mat-raised-button>Login</button>
+          <button type="reset" name="reset-button" class="ml-2" color="warn" mat-raised-button>Reset</button>
+        </form>
+      </app-card>
+    </div>
+  </div>
+</div>

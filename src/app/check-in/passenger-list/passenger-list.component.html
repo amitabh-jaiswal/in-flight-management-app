@@ -1,0 +1,131 @@
+<div class="container-fluid">
+  <div class="row mt-5">
+    <div class="col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
+      <app-flight-select></app-flight-select>
+    </div>
+  </div>
+  <div class="row mt-4 mb-5">
+    <div class="col-sm-12 col-md-10 col-lg-10 offset-sm-0 offset-md-1 offset-lg-1">
+      <div class="table-container mat-elevation-z8">
+        <div class="row">
+          <div class="col-12" [ngClass]="{ 'col-sm-10': isUserAdmin }">
+            <mat-form-field class="pl-2 pr-2 pt-3 input-full-width">
+              <mat-label>Filter Passengers {{ isUserAdmin ? 'With Missign Details' : '' }}</mat-label>
+              <span matPrefix>
+                <mat-icon>filter_alt</mat-icon>
+              </span>
+              <mat-chip-list #chipList aria-label="Filtered Options">
+                <mat-chip *ngFor="let filter of selectedFilters" [selectable]="selectable" [removable]="removable"
+                  (removed)="remove(filter)">
+                  {{ filter }}
+                  <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                </mat-chip>
+                <input placeholder="Select Filter Options..." #filterInput [formControl]="filteredInput"
+                  [matAutocomplete]="auto" [matChipInputFor]="chipList"
+                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes" (matChipInputTokenEnd)="add($event)">
+                <span style="cursor: pointer;" aria-label="Reset All Filters" matSuffix (click)="resetAllFilters()">
+                  <mat-icon *ngIf="selectedFilters.length > 0" color="warn">cancel</mat-icon>
+                </span>
+              </mat-chip-list>
+              <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+                <mat-option *ngFor="let value of filteredValues$ | async" [value]="value">
+                  {{ value }}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+          <div class="col-12 col-sm-2 my-auto" *ngIf="isUserAdmin">
+            <button class="input-full-width" [disabled]="!this.flightId" color="primary"
+              (click)="openPassengerDialog('add', $event, null)" type="button" mat-raised-button>Add Passenger</button>
+          </div>
+        </div>
+        <mat-table [dataSource]="dataSource">
+          <!-- First Name Column -->
+          <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <span class="mobile-label">Name</span>
+              {{element.firstName + ' ' + element.lastName}}
+            </mat-cell>
+          </ng-container>
+
+          <!-- Last Name Column -->
+          <!-- <ng-container matColumnDef="lastName">
+            <mat-header-cell *matHeaderCellDef> Last Name </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.lastName}} </mat-cell>
+          </ng-container> -->
+
+          <!-- Gender Column -->
+          <ng-container matColumnDef="gender">
+            <mat-header-cell *matHeaderCellDef> Gender </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <span class="mobile-label ml-4">Gender </span>
+              {{element.gender}} </mat-cell>
+          </ng-container>
+
+          <!-- DOB Column -->
+          <ng-container matColumnDef="dob">
+            <mat-header-cell *matHeaderCellDef> DOB </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <span class="mobile-label ml-4">DOB</span>
+              {{element.dob ? (element.dob | date: 'mediumDate') : '-'}} </mat-cell>
+          </ng-container>
+
+          <!-- PNR Column -->
+          <ng-container matColumnDef="bookingPNR">
+            <mat-header-cell *matHeaderCellDef> PNR </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <span class="mobile-label ml-4">PNR</span>
+              {{element.bookingPNR}} </mat-cell>
+          </ng-container>
+
+          <!-- Passport Number Column -->
+          <ng-container matColumnDef="passportNumber">
+            <mat-header-cell *matHeaderCellDef> Passport </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <span class="mobile-label ml-4">Passport</span> {{element.passportNumber ? element.passportNumber : '-'}}
+            </mat-cell>
+          </ng-container>
+
+          <!-- Address Column -->
+          <ng-container matColumnDef="seatNumber">
+            <mat-header-cell *matHeaderCellDef> Seat </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <span class="mobile-label ml-4">Seat</span> {{element.seatNumber}} </mat-cell>
+          </ng-container>
+
+          <!-- Edit Column -->
+          <ng-container matColumnDef="edit">
+            <mat-header-cell *matHeaderCellDef aria-label="Edit Column"> Edit </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <span class="mobile-label ml-4">Edit</span>
+              <button (click)="openPassengerDialog('update', $event, element)" type="button" mat-icon-button
+                aria-label="Edit Passenger Button">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"> </mat-header-row>
+          <mat-row style="cursor: pointer;" *matRowDef="let row; columns: displayedColumns;"
+            (click)="openBottomSheet(row, $event)"></mat-row>
+        </mat-table>
+
+        <div class="no-records" *ngIf="flightSelected && dataSource.data.length === 0">
+          <h3 class="display-3">No Records Found!!!</h3>
+        </div>
+
+        <div class="no-records"
+          *ngIf="flightSelected && dataSource.data.length > 0 && dataSource.filteredData.length === 0 && selectedFilters.length > 0">
+          <h3 class="display-3">No Records Found For the Selected Filters.</h3>
+        </div>
+
+        <div class="no-records" *ngIf="!flightSelected">
+          <h3 class="display-3">Please select flight to view passengers list.</h3>
+        </div>
+
+        <mat-paginator [pageSizeOptions]="[10,20,30]" showFirstLastButtons></mat-paginator>
+      </div>
+    </div>
+  </div>
+</div>

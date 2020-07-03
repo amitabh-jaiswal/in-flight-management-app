@@ -1,0 +1,199 @@
+<div class="container-fluid">
+  <div class="row mt-5">
+    <div class="col-sm-10 col-md-8 col-lg-8 col-12 offset-sm-1 offset-md-2 offset-lg-2 offset-0">
+      <div *ngIf="errorMessage; else details" class="alert alert-danger" role="alert">
+        <h3 class="display-4">{{ errorMessage }}</h3>
+      </div>
+      <ng-template #details>
+        <app-card [title]="passenger.firstName + ' ' + passenger.lastName">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-sm-3 col-md-4 col-lg-2 col-5  mt-2">
+                <span *ngIf="!isUpdating; else passportUpdate">
+                  <h5 class="text-center display-5 font-weight-bold">
+                    <mat-icon class="mr-1 align-middle">assignment_ind</mat-icon>Passport:
+                  </h5>
+                  <p class="text-center">{{ passenger.passportNumber ? passenger.passportNumber : noDataMessage }}</p>
+                </span>
+                <ng-template #passportUpdate>
+                  <mat-form-field class="input-full-width" appearance="outline">
+                    <mat-label>Passport</mat-label>
+                    <input matInput maxlength="9" [(ngModel)]="passport">
+                  </mat-form-field>
+                </ng-template>
+              </div>
+              <div class="col-sm-2 col-md-4 col-lg-3 col-7 mt-2">
+                <span *ngIf="!isUpdating; else dobUpdate">
+                  <h5 class="text-center display-5 font-weight-bold">
+                    <mat-icon class="mr-1 align-middle">calendar_today</mat-icon>Date of Birth:
+                  </h5>
+                  <p class="text-center">{{ passenger.dob ? (passenger.dob | date: 'mediumDate') : noDataMessage }}</p>
+                </span>
+                <ng-template #dobUpdate>
+                  <mat-form-field class="input-full-width" appearance="outline">
+                    <mat-label>Date of Birth</mat-label>
+                    <input matInput [matDatepicker]="picker" [(ngModel)]="dob">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                </ng-template>
+              </div>
+              <div class="col-sm-2 col-md-2 col-3  mt-2">
+                <span>
+                  <h5 class="text-center display-5 font-weight-bold">
+                    <mat-icon class="mr-1 align-middle">person</mat-icon>Gender:
+                  </h5>
+                  <p class="text-center">{{ passenger.gender }}</p>
+                </span>
+              </div>
+              <div class="col-sm-2 col-md-2 col-3  mt-2">
+                <span>
+                  <h5 class="text-center display-5 font-weight-bold">
+                    <mat-icon class="mr-1 align-middle">event_seat</mat-icon>Seat:
+                  </h5>
+                  <p class="text-center">{{ passenger.seatNumber }}</p>
+                </span>
+              </div>
+              <div class="col-sm-2 col-md-3 col-lg-2 col-4  mt-2">
+                <span>
+                  <h5 class="text-center display-5 font-weight-bold">
+                    <mat-icon class="mr-1 align-middle">confirmation_number</mat-icon>PNR:
+                  </h5>
+                  <p class="text-center">{{ passenger.bookingPNR }}</p>
+                </span>
+              </div>
+              <div class="col-sm-2 col-md-2 col-2  mt-2">
+                <span>
+                  <h5 class="text-center display-5 font-weight-bold">
+                    <mat-icon class="mr-1 align-middle">backpack</mat-icon>Bag:
+                  </h5>
+                  <p class="text-center">{{ passenger.bagCount }}</p>
+                </span>
+              </div>
+              <div class="col-sm-12 ml-2">
+                <span *ngIf="!isUpdating; else addressUpdate">
+                  <h5 class="display-5 font-weight-bold">
+                    <mat-icon class="mr-1 align-middle">location_city</mat-icon>Address:
+                  </h5>
+                  <p>{{ passenger.address ? passenger.address : noDataMessage }}</p>
+                </span>
+                <ng-template #addressUpdate>
+                  <mat-form-field class="input-full-width" appearance="outline">
+                    <mat-label>Address</mat-label>
+                    <textarea matInput [(ngModel)]="address"></textarea>
+                  </mat-form-field>
+                </ng-template>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12">
+                <button *ngIf="!passenger.checkedIn && !isUserAdmin" (click)="changeCheckInStatus(false)" type="button"
+                  mat-raised-button color="primary">Check-in</button>
+                <button *ngIf="passenger.checkedIn && !isUserAdmin" (click)="changeCheckInStatus(true) " type="button"
+                  mat-raised-button color="warn">Undo
+                  Check-in</button>
+                <button *ngIf="isUserAdmin && !isUpdating" (click)="updateDetails();setValues(false);" type="button"
+                  color="primary" mat-raised-button color="accent">Update
+                  Details</button>
+                <button class="mr-2" (click)="saveDetails()" *ngIf="isUpdating" type="button" mat-raised-button
+                  color="primary">Save
+                </button>
+                <button *ngIf="isUpdating" (click)="updateDetails();setValues(true);" type="button" mat-raised-button
+                  color="warn">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </app-card>
+      </ng-template>
+    </div>
+  </div>
+  <div class="row mt-5 mb-5">
+    <div
+      class="col-sm-10 col-md-10 col-lg-10 col-12 offset-sm-1 offset-md-1 offset-lg-1 offset-0 ancillary-service-background">
+      <h1 class="mat-subheader display-1 text-light">Ancillary Services</h1>
+      <div>
+        <app-card title="Meals">
+          <div class="row" *ngIf="meals && meals.length > 0; else noMeal">
+            <div class="col-sm-3 col-6 mt-2 mb-3" *ngFor="let meal of meals">
+              <app-ancillary-service-card [serviceDetails]="meal" [isAdmin]="isUserAdmin"
+                [isUpdating]="isServiceUpdating" action="REMOVE" [isSelected]="meal.isSelected"
+                (cardSelect)="onSelect(meal, 'MEALS')">
+              </app-ancillary-service-card>
+            </div>
+          </div>
+          <ng-template #noMeal>
+            <div class="row  mt-4 mb-4">
+              <div class="col-12 text-center font-weight-normal">
+                <span class="font-weight-normal" style="font-size: 22px;">{{ noServiceMessage('meal(s)') }}</span>
+              </div>
+            </div>
+          </ng-template>
+        </app-card>
+      </div>
+      <div class="mt-5">
+        <app-card class="mt-4" title="Beverages">
+          <div class="row" *ngIf="beverages && beverages.length > 0; else noBeverage">
+            <div class="col-sm-3 col-6 mt-2 mb-3" *ngFor="let beverage of beverages">
+              <app-ancillary-service-card [serviceDetails]="beverage" [isAdmin]="isUserAdmin"
+                [isUpdating]="isServiceUpdating" action="REMOVE" [isSelected]="beverage.isSelected"
+                (cardSelect)="onSelect(beverage, 'BEVERAGES')">
+              </app-ancillary-service-card>
+            </div>
+          </div>
+          <ng-template #noBeverage>
+            <div class="row  mt-4 mb-4">
+              <div class="col-12 text-center">
+                <span class="font-weight-normal" style="font-size: 22px;">{{ noServiceMessage('beverage(s)') }}</span>
+              </div>
+            </div>
+          </ng-template>
+        </app-card>
+      </div>
+      <div class="mt-5 mb-5">
+        <app-card class="mt-4" title="Shopping Items">
+          <div class="row" *ngIf="shoppingItems && shoppingItems.length > 0; else noShoppingItems">
+            <div class="col-sm-3 col-6 mt-2 mb-3" *ngFor="let item of shoppingItems">
+              <app-ancillary-service-card action="REMOVE" [serviceDetails]="item" [isAdmin]="isUserAdmin"
+                [isUpdating]="isServiceUpdating" [isSelected]="item.isSelected"
+                (cardSelect)="onSelect(item, 'SHOPPING_ITEMS')">
+              </app-ancillary-service-card>
+            </div>
+          </div>
+          <ng-template #noShoppingItems>
+            <div class="row mt-4 mb-4">
+              <div class="col-12 text-center">
+                <span class="font-weight-normal" style="font-size: 22px;">
+                  {{ noServiceMessage('shopping item(s)') }}
+                </span>
+              </div>
+            </div>
+          </ng-template>
+        </app-card>
+      </div>
+      <div class="row" *ngIf="!isUserAdmin">
+        <div class="col-12 mb-4">
+          <button *ngIf="!isServiceUpdating" type="button" (click)="addService()" class="mr-2" mat-raised-button
+            color="primary" aria-label="Add Ancillary Services">
+            <mat-icon>library_add</mat-icon>
+            Add Services
+          </button>
+          <button *ngIf="!isServiceUpdating"
+            [disabled]="passenger.ancillaryServices && (passenger.ancillaryServices.meals.length == 0 && passenger.ancillaryServices.shoppingItems.length == 0 &&passenger.ancillaryServices.beverages.length == 0)"
+            (click)="updateDetails(true)" type="button" mat-raised-button color="accent">
+            <mat-icon>delete</mat-icon>
+            Delete Services
+          </button>
+          <button *ngIf="isServiceUpdating" type="button" (click)="saveDetails(true)" class="mr-2" mat-raised-button
+            color="primary">
+            <mat-icon>save</mat-icon>
+            Save
+          </button>
+          <button *ngIf="isServiceUpdating" (click)="updateDetails(true)" type="button" mat-raised-button color="warn">
+            <mat-icon>cancel</mat-icon>
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

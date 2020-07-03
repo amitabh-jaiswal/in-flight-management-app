@@ -1,0 +1,90 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #drawer [hidden]="(isHandset$ | async) ===false" class="sidenav" fixedInViewport
+    [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'" [mode]="(isHandset$ | async) ? 'over' : 'side'"
+    [opened]="(isHandset$ | async) === false">
+    <!-- <mat-toolbar>
+      <span *ngIf="(isHandset$ | async) ===false">Menu</span>
+      <button *ngIf="isHandset$ | async" type="button" aria-label="close Sidenav" class="text-center" mat-button
+        (click)="drawer.toggle()">
+        <mat-icon aria-label="Close SideNav Icon">keyboard_backspace</mat-icon>
+        <span class="pl-2 text-center">Close</span>
+      </button>
+    </mat-toolbar> -->
+    <mat-nav-list>
+      <a mat-list-item (click)="drawer.toggle()" style="cursor: pointer;">
+        <span matLine>Close</span>
+        <mat-icon aria-label="Close SideNav Icon" matListIcon>keyboard_backspace</mat-icon>
+      </a>
+      <a *ngIf="isLoggedIn" mat-list-item style="cursor: pointer;">
+        <span matLine>{{ user.email }}</span>
+        <mat-icon matListIcon>account_circle</mat-icon>
+      </a>
+      <a *ngIf="!isLoggedIn" mat-list-item routerLinkActive="mat-primary" [routerLinkActive]="'active-toolbar'"
+        routerLink="/login" (click)="drawer.toggle()" style="cursor: pointer;">
+        <span matLine>Login</span>
+        <mat-icon matListIcon>person</mat-icon>
+      </a>
+      <a *ngIf="!isLoggedIn" mat-list-item routerLink='/signup' [routerLinkActive]="'active-toolbar'"
+        (click)="drawer.toggle()" style="cursor: pointer;">
+        <span matLine>Sign Up</span>
+        <mat-icon matListIcon>person_add</mat-icon>
+      </a>
+      <a *ngIf="isLoggedIn" mat-list-item routerLink="/flight" [routerLinkActiveOptions]="{ exact: true }"
+        queryParamsHandling="preserve" [routerLinkActive]="'active-toolbar'" (click)="drawer.toggle()"
+        style="cursor: pointer;">
+        <span matLine>Flight</span>
+        <mat-icon matListIcon>flight</mat-icon>
+      </a>
+      <a *ngIf="isLoggedIn" mat-list-item routerLink="/flight/passengers" [routerLinkActive]="'active-toolbar'"
+        queryParamsHandling="preserve" (click)="drawer.toggle()" style="cursor: pointer;">
+        <span matLine>Passengers</span>
+        <mat-icon matListIcon>people_alt</mat-icon>
+      </a>
+      <a *ngIf="isLoggedIn" mat-list-item (click)="logout();drawer.toggle()" style="cursor: pointer;">
+        <span matLine>Logout</span>
+        <mat-icon matListIcon>exit_to_app</mat-icon>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar class="pt-2 pb-2" color="primary">
+      <mat-toolbar-row>
+        <button type="button" class="menu-header" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()"
+          *ngIf="isHandset$ | async">
+          <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+        </button>
+        <span class="main-header">
+          <mat-icon class="mr-2 align-top" style="font-size: 30px;">flight_takeoff</mat-icon>GoCraft
+        </span>
+        <span class="spacer"></span>
+        <button class="mr-2 menu-toolbar-style" *ngIf="(isHandset$ | async) ===false && !isLoggedIn"
+          [routerLinkActive]="'active-toolbar'" routerLink="/login" mat-button style="cursor: pointer;">
+          <mat-icon>person</mat-icon><span class="align-middle" style="font-size: 20px;">Login</span>
+        </button>
+        <button class="mr-2 menu-toolbar-style" *ngIf="(isHandset$ | async) ===false && !isLoggedIn"
+          [routerLinkActive]="'active-toolbar'" routerLink='/signup' mat-button style="cursor: pointer;">
+          <mat-icon>person_add</mat-icon><span style="font-size: 20px;">Sign Up</span>
+        </button>
+        <button class="mr-2 menu-toolbar-style" *ngIf="(isHandset$ | async) ===false && isLoggedIn"
+          [routerLinkActive]="'active-toolbar'" mat-button style="cursor: pointer;">
+          <mat-icon>account_circle</mat-icon><span style="font-size: 20px;">{{ user.email }}</span>
+        </button>
+        <button class="mr-2 menu-toolbar-style" *ngIf="(isHandset$ | async) ===false && isLoggedIn"
+          queryParamsHandling="preserve" [routerLinkActiveOptions]="{exact: true}" routerLink="/flight"
+          [routerLinkActive]="'active-toolbar'" mat-button style="cursor: pointer;">
+          <mat-icon>flight</mat-icon><span style="font-size: 20px;">Flight</span>
+        </button>
+        <button class="mr-2 menu-toolbar-style" *ngIf="(isHandset$ | async) ===false && isLoggedIn"
+          queryParamsHandling="preserve" routerLink="/flight/passengers" [routerLinkActive]="'active-toolbar'"
+          mat-button style="cursor: pointer;">
+          <mat-icon>people_alt</mat-icon><span style="font-size: 20px;">Passengers</span>
+        </button>
+        <button class="mr-2 menu-toolbar-style" *ngIf="(isHandset$ | async) ===false && isLoggedIn" (click)="logout()"
+          [routerLinkActive]="'active-toolbar'" mat-button style="cursor: pointer;">
+          <mat-icon>exit_to_app</mat-icon><span>Logout</span>
+        </button>
+      </mat-toolbar-row>
+    </mat-toolbar>
+    <ng-content></ng-content>
+  </mat-sidenav-content>
+</mat-sidenav-container>

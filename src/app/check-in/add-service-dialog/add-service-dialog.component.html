@@ -1,0 +1,112 @@
+<h1 mat-dialog-title>Ancillary Services</h1>
+<mat-dialog-content class="mat-typography mt-4 mb-4">
+  <mat-accordion>
+    <mat-expansion-panel [expanded]='true'>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Meals</mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="row" *ngIf="meals.length > 0; else noMeals">
+        <div class="col-sm-3 col-6 mt-2 mb-3" *ngFor="let meal of meals">
+          <app-ancillary-service-card [serviceDetails]="meal" action="ADD" [isAdmin]="data.service.isAdmin"
+            [isUpdating]="true" [isSelected]="meal.isSelected" [newPassenger]="data.newPassengerServices"
+            (cardSelect)="onSelect(meal, 'MEALS')">
+          </app-ancillary-service-card>
+        </div>
+      </div>
+      <ng-template #noMeals>
+        <div class="row">
+          <div class="col-12 mt-2 mb-3 text-center">
+            <h2 class="display-3 font-weight-normal"> No Meals Are Added in Ancillary Service For Flight.</h2>
+          </div>
+        </div>
+      </ng-template>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Beverages</mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="row" *ngIf="beverages.length > 0; else noBeverages">
+        <div class="col-sm-3 col-6 mt-2 mb-3" *ngFor="let beverage of beverages">
+          <app-ancillary-service-card [serviceDetails]="beverage" action="ADD" [isAdmin]="data.service.isAdmin"
+            [isUpdating]="true" [isSelected]="beverage.isSelected" [newPassenger]="data.newPassengerServices"
+            (cardSelect)="onSelect(beverage, 'BEVERAGES')">
+          </app-ancillary-service-card>
+        </div>
+      </div>
+      <ng-template #noBeverages>
+        <div class="row">
+          <div class="col-12 mt-2 mb-3 text-center">
+            <h2 class="display-3 font-weight-normal">No Beverages Are Added in Ancillary Service For Flight.</h2>
+          </div>
+        </div>
+      </ng-template>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Shopping Items</mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="row" *ngIf="shoppingItems.length > 0; else noItems">
+        <div class="col-sm-3 col-6 mt-2 mb-3" *ngFor="let item of shoppingItems">
+          <app-ancillary-service-card [serviceDetails]="item" action="ADD" [isAdmin]="data.service.isAdmin"
+            [isUpdating]="true" [isSelected]="item.isSelected" [newPassenger]="data.newPassengerServices"
+            (cardSelect)="onSelect(item, 'SHOPPING_ITEMS')">
+          </app-ancillary-service-card>
+        </div>
+      </div>
+      <ng-template #noItems>
+        <div class="row">
+          <div class="col-12 mt-2 mb-3 text-center">
+            <h2 class="display-3 font-weight-normal">No Shopping Items Are Added in Ancillary Service For Flight.</h2>
+          </div>
+        </div>
+      </ng-template>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <!-- <div class="row">
+    <div class="col-12">
+      <div>
+        <app-card title="Meals">
+          <div class="row">
+            <div class="col-sm-3 col-6 mt-2 mb-3" *ngFor="let meal of meals">
+              <app-ancillary-service-card [serviceDetails]="meal" action="ADD" [isAdmin]="data.isAdmin"
+                [isUpdating]="true" [isSelected]="meal.isSelected" (select)="onSelect(meal, 'MEALS')">
+              </app-ancillary-service-card>
+            </div>
+          </div>
+        </app-card>
+      </div>
+      <div class="mt-5">
+        <app-card class="mt-4" title="Beverages">
+          <div class="row">
+            <div class="col-sm-3 col-6 mt-2 mb-3" *ngFor="let beverage of beverages">
+              <app-ancillary-service-card [serviceDetails]="beverage" action="ADD" [isAdmin]="data.isAdmin"
+                [isUpdating]="true" [isSelected]="beverage.isSelected" (select)="onSelect(beverage, 'BEVERAGES')">
+              </app-ancillary-service-card>
+            </div>
+          </div>
+        </app-card>
+      </div>
+      <div class="mt-5 mb-5">
+        <app-card class="mt-4" title="Shopping Items">
+          <div class="row">
+            <div class="col-sm-3 col-6 mt-2 mb-3" *ngFor="let item of shoppingItems">
+              <app-ancillary-service-card [serviceDetails]="item" action="ADD" [isAdmin]="data.isAdmin"
+                [isUpdating]="true" [isSelected]="item.isSelected" (select)="onSelect(item, 'SHOPPING_ITEMS')">
+              </app-ancillary-service-card>
+            </div>
+          </div>
+        </app-card>
+      </div>
+    </div>
+  </div> -->
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button type="button" id="saveButton" aria-label="save button" class="mr-2" (click)="onSave()" mat-raised-button color="primary">
+    <mat-icon>save</mat-icon>
+    Save
+  </button>
+  <button type="button" aria-label="cancel button" [mat-dialog-close]="{ action: 'close' }" mat-raised-button color="warn" cdkFocusInitial>
+    <mat-icon>cancel</mat-icon>
+    Close
+  </button>
+</mat-dialog-actions>

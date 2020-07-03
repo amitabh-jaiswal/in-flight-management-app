@@ -1,0 +1,28 @@
+<app-card title="Select Scheduled Flight">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <mat-form-field class="input-full-width" appearance="outline">
+          <mat-label>Select Flight</mat-label>
+          <mat-select [(ngModel)]="selectedFlight" (selectionChange)=onSelect()>
+            <mat-option aria-selected="---NONE---">---NONE---</mat-option>
+            <mat-option [value]="scheduleFlight.flightId" *ngFor="let scheduleFlight of scheduledFlights">
+              {{ scheduleFlight.operatingAirline + ' - ' + scheduleFlight.flightNumber }}
+              <span class="ml-2">
+                {{scheduleFlight.depCode}}
+                <!-- <mat-icon class="ml-2">arrow_right_alt</mat-icon> -->
+                <b class="text-bold mr-2 ml-2">TO</b>
+                {{scheduleFlight.arrCode}}
+                <span class="ml-2">( {{ scheduleFlight.departScheduled | date: 'fullDate' }} )</span>
+              </span>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <!-- <button color="primary" (click)="onSelect()" type="button" mat-raised-button>Show
+          Details</button> -->
+        <button color="warn" [disabled]="!selectedFlight" (click)="onClear()" class="ml-2" type="button"
+          mat-raised-button>Clear</button>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,59 @@
+@mixin seat-icon-size {
+  font-size: 30px !important;
+  cursor: pointer !important;
+}
+
+@mixin legend-box {
+  height: 30px;
+  width: 30px;
+  border-radius: 2px;
+}
+
+.checked-in {
+  @include seat-icon-size;
+  color: rgb(13, 94, 13) !important;
+}
+
+.not-checked-in {
+  @include seat-icon-size;
+  color: rgb(112, 19, 19) !important;
+}
+
+.empty-seats {
+  @include seat-icon-size;
+  color: rgb(32, 31, 31) !important;
+}
+
+.with-meal {
+  @include seat-icon-size;
+  color: rgb(24, 65, 141) !important;
+}
+
+.without-meal {
+  @include seat-icon-size;
+  color: rgb(163, 37, 37) !important;
+}
+
+.checked-in-legend {
+  @include legend-box;
+  background-color: rgb(13, 94, 13) !important;
+}
+
+.not-checked-in-legend {
+  @include legend-box;
+  background-color: rgb(112, 19, 19) !important;
+}
+
+.with-meal-legend {
+  @include legend-box;
+  background-color: rgb(24, 65, 141) !important;
+}
+
+.without-meal-legend {
+  @include legend-box;
+  background-color: rgb(163, 37, 37) !important;
+}
+
+.blocked-cursor {
+  cursor: no-drop !important;
+}

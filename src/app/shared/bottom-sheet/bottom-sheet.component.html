@@ -1,0 +1,26 @@
+<div class="container-fluid" *ngIf="passengerData">
+  <h1 class="display-1">{{ passengerData.firstName + ' ' + passengerData.lastName }}</h1>
+  <mat-nav-list>
+    <mat-list-item>
+      <span>
+        <mat-icon class="align-bottom">event_seat</mat-icon>
+        <span class="ml-2 mr-2">Seat:</span>
+        {{passengerData.seatNumber}}
+      </span>
+      <span class="spacer"></span>
+      <!-- <span>
+        <span class="ml-2 mr-2">Checked In Status:</span>
+        <span class="align-bottom">{{ passengerData.checkedIn ? 'YES' : 'NO' }}</span>
+      </span> -->
+      <button type="button" mat-raised-button (click)="save()"
+        [color]="passengerData.checkedIn ? 'warn' : 'primary'">{{passengerData.checkedIn ? 'Undo Check In' : 'Check In'}}</button>
+    </mat-list-item>
+    <!-- <mat-list-item>
+      <button type="button" mat-raised-button (click)="passengerData.checkedIn = !passengerData.checkedIn"
+        [color]="passengerData.checkedIn ? 'warn' : 'primary'">{{passengerData.checkedIn ? 'Undo Check In' : 'Check In'}}</button>
+    </mat-list-item> -->
+    <mat-list-item>
+      <button type="button" (click)="showPassengerDetails()" class="input-full-width" color="primary" mat-raised-button>View Passenger Details</button>
+    </mat-list-item>
+  </mat-nav-list>
+</div>

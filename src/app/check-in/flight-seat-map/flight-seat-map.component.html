@@ -1,0 +1,75 @@
+<app-card title="Flight Seat Map">
+  <mat-slide-toggle color="primary" [(ngModel)]="showMealMap">Special Meals</mat-slide-toggle>
+  <div class="row">
+    <div class="col-sm-12 text-center">
+      <div class="row" *ngIf="seatMap && seatMap.cabins">
+        <div class="col-12 font-weight-bold text-center">
+          <span class="mr-4">A</span>
+          <span class="mr-4">B</span>
+          <span class="mr-4 mr-4">C</span>
+          <span class="mr-4 ml-4">D</span>
+          <span class="mr-4">E</span>
+          <span>F</span>
+        </div>
+        <div class="col-12" *ngFor="let seatRow of seatMap.cabins[0].seatRows">
+          <span *ngFor="let seat of seatRow.seats; let i=index">
+            <p class="mt-2 text-center text-muted" *ngIf="seatRow.exitRow && i===0">EMERGENCY EXIT</p>
+            <mat-icon (click)="openSheet(seat)" *ngIf="!showMealMap" [matTooltip]="seat.seatNumber" class="mt-2"
+              [ngClass]="{ 'mr-2': i!==5 && !seat.aisleToTheRight,
+               'checked-in': seat.passengerId && seat.passengerCheckedIn,
+                'not-checked-in': seat.passengerId && !seat.passengerCheckedIn,
+              'empty-seats': !seat.passengerId, 'blocked-cursor': !seat.passengerId }">
+              {{seat.passengerWithWheelChair ? 'wheelchair_pickup' : seat.passengerWithInfant ? 'child_care' : 'event_seat'}}
+            </mat-icon>
+            <mat-icon (click)="openSheet(seat)" *ngIf="showMealMap" [matTooltip]="seat.seatNumber" class="mt-2" [ngClass]="{ 'mr-2': i!==5 && !seat.aisleToTheRight,
+            'with-meal': seat.passengerId && seat.passengersWithSpecialMeals,
+            'without-meal': seat.passengerId && !seat.passengersWithSpecialMeals,
+           'empty-seats': !seat.passengerId }">
+              {{ 'event_seat'}}
+            </mat-icon>
+            <!-- {{i}} -->
+            <span *ngIf="seat.aisleToTheRight"
+              class="ml-4 mr-4 font-weight-bold text-center align-text-bottom">{{seat.rowNumber}}</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col-12">
+      <h1 class="display-1 mat-subheader">Aircraft Features</h1>
+      <div class="row">
+        <div class="col-sm-2 col-6 text-center">
+          <mat-icon class="empty-seats text-center">event_seat</mat-icon>
+          <p>Available Seat</p>
+        </div>
+        <div *ngIf="!showMealMap" class="col-sm-2 col-6 text-center">
+          <mat-icon class="empty-seats">wheelchair_pickup</mat-icon>
+          <p>Passenger Requiring Wheel Chair</p>
+        </div>
+        <div *ngIf="!showMealMap" class="col-sm-2 col-6 text-center">
+          <mat-icon class="empty-seats">child_care</mat-icon>
+          <p>Passenger With Infant</p>
+        </div>
+        <div *ngIf="!showMealMap" class="col-sm-2 col-6 text-center">
+          <div class="mb-2 mx-auto checked-in-legend"></div>
+          <p>Checked In Passenger</p>
+        </div>
+        <div *ngIf="!showMealMap" class="col-sm-2 col-6 text-center">
+          <div class="mb-2 mx-auto not-checked-in-legend"></div>
+          <p>Not Checked In Passenger</p>
+        </div>
+        <div *ngIf="showMealMap" class="col-sm-2 col-6 text-center">
+          <mat-icon class="with-meal">event_seat</mat-icon>
+          <!-- <div class="mb-2 mx-auto with-meal-legend"></div> -->
+          <p>Passenger With Special Meal</p>
+        </div>
+        <div *ngIf="showMealMap" class="col-sm-2 col-6 text-center">
+          <mat-icon class="without-meal">event_seat</mat-icon>
+          <!-- <div class="mb-2 mx-auto without-meal-legend"></div> -->
+          <p>Passenger With No Meal</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

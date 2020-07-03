@@ -1,0 +1,22 @@
+<mat-card style="max-width: 400px;" style="cursor: pointer;" (click)="onSelect()">
+  <img mat-card-image [src]="serviceDetails.image" [alt]="serviceDetails.mealName">
+  <mat-card-content>
+    <!-- <mat-card-header> -->
+    <mat-card-title [matTooltip]="serviceDetails.mealName ? serviceDetails.mealName : serviceDetails.productName"
+      class="service-heading font-weight-bold truncate-heading">
+      {{ serviceDetails.mealName ? serviceDetails.mealName : serviceDetails.productName   }}</mat-card-title>
+    <mat-card-subtitle>{{ serviceDetails.price | currency: serviceDetails.currency }}</mat-card-subtitle>
+    <!-- </mat-card-header> -->
+  </mat-card-content>
+  <mat-card-actions align="end" *ngIf="!isUserAdmin && isUpdating && action === 'REMOVE'">
+    <button type="button" mat-raised-button [color]="isSelected ? 'warn' : 'primary'">
+      {{ isSelected ? 'SELECTED' : 'SELECT' }}
+    </button>
+  </mat-card-actions>
+  <mat-card-actions align="end"
+    *ngIf="(isUserAdmin && newPassenger && isUpdating && action === 'ADD') || (!isUserAdmin && isUpdating && action === 'ADD')">
+    <button type="button" mat-raised-button [color]="isSelected ? 'warn' : 'primary'">
+      {{ isSelected ? 'REMOVE' : 'ADD' }}
+    </button>
+  </mat-card-actions>
+</mat-card>

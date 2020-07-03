@@ -1,0 +1,11 @@
+<mat-card>
+  <mat-card-header *ngIf="title">
+    <mat-card-title>
+      <h1>{{ title }}</h1>
+    </mat-card-title>
+  </mat-card-header>
+  <!-- <hr *ngIf="title" class="mb-3"> -->
+  <mat-card-content>
+    <ng-content></ng-content>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,106 @@
+<h1 mat-dialog-title>{{ data.action }}&nbsp;Passenger</h1>
+<mat-dialog-content>
+  <div class="form-group">
+    <div class="form-row">
+      <mat-form-field class="col-6">
+        <mat-label>First Name</mat-label>
+        <input matInput [(ngModel)]="tempPassenger.firstName" placeholder="First Name"
+          [disabled]="data.action === 'Update' || !data.isUserAdmin" required>
+      </mat-form-field>
+      <mat-form-field class="col-6">
+        <mat-label>Last Name</mat-label>
+        <input matInput [(ngModel)]="tempPassenger.lastName" placeholder="Last Name"
+          [disabled]="data.action === 'Update' || !data.isUserAdmin" required>
+      </mat-form-field>
+    </div>
+    <div class="form-row">
+      <mat-form-field class="input-full-width col-3 col-sm-2">
+        <mat-label>Gender</mat-label>
+        <mat-select [(ngModel)]="tempPassenger.gender" required
+          [disabled]="data.action === 'Update' || !data.isUserAdmin">
+          <mat-option value="M">Male</mat-option>
+          <mat-option value="F">Female</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="input-full-width col-3 col-sm-2">
+        <mat-label>Bag</mat-label>
+        <mat-select [(ngModel)]="tempPassenger.bagCount" required
+          [disabled]="data.action === 'Update' || !data.isUserAdmin">
+          <mat-option [value]="index" *ngFor="let index of [0,1,2,3]">{{index}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="input-full-width col-6 col-sm-3">
+        <mat-label>Date of Birth</mat-label>
+        <input matInput [max]="maxDate" [(ngModel)]="tempPassenger.dob" placeholder="mm/dd/yyyy"
+          [matDatepicker]="picker" [disabled]="!data.isUserAdmin">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field class="input-full-width col-6 col-sm-3">
+        <mat-label>Passport</mat-label>
+        <input matInput [(ngModel)]="tempPassenger.passportNumber" placeholder="Ex: HSU643CSJS"
+          [disabled]="!data.isUserAdmin">
+      </mat-form-field>
+      <mat-form-field class="input-full-width col-6 col-sm-2">
+        <mat-label>Seat</mat-label>
+        <mat-select [(ngModel)]="tempPassenger.seatNumber" required>
+          <mat-option *ngFor="let seat of seats" [value]="seat.seatNumber"
+            [disabled]="!(seat.passengerId && seat.passengerId === tempPassenger.id) && seat.passengerId">
+            {{ seat.seatNumber }}</mat-option>
+        </mat-select>
+        <mat-hint>Only Available Seats Can be Selected.</mat-hint>
+      </mat-form-field>
+    </div>
+    <div class="form-row mt-2">
+      <div class="input-full-width col-12 col-sm-3">
+        <mat-checkbox color="primary" [(ngModel)]="tempPassenger.wheelChair"
+          [disabled]="data.action === 'Update' || !data.isUserAdmin">Wheel Chair</mat-checkbox>
+      </div>
+      <div class="input-full-width col-12 col-sm-3">
+        <mat-checkbox color="primary" [(ngModel)]="tempPassenger.withInfant"
+          [disabled]="data.action === 'Update' || !data.isUserAdmin">With Infant</mat-checkbox>
+      </div>
+      <div class="input-full-width col-12 col-sm-3">
+        <mat-checkbox color="primary" [(ngModel)]="tempPassenger.checkedIn"
+          [disabled]="data.action === 'Update' || !data.isUserAdmin">Checked-in</mat-checkbox>
+      </div>
+    </div>
+    <div class="form-row mt-2 mb-2">
+      <div class="col-12">
+        <span class="display-5 font-weight-bold">Services:&nbsp;</span>
+        <span *ngIf="!(tempPassenger.ancillaryServices.meals.length > 0) && !(tempPassenger.ancillaryServices.beverages.length > 0) &&
+          !(tempPassenger.ancillaryServices.shoppingItems.length > 0); else services">No
+          Services Added.</span>
+        <ng-template #services>
+          <span>Meals(<b>{{ tempPassenger.ancillaryServices.meals.length }}</b>),&nbsp;</span>
+          <span>Beverages(<b>{{ tempPassenger.ancillaryServices.beverages.length }}</b>),&nbsp;</span>
+          <span>Shopping Items(<b>{{ tempPassenger.ancillaryServices.shoppingItems.length }}</b>)</span>
+        </ng-template>&nbsp;&nbsp;
+        <button *ngIf="!data.isUserAdmin || (data.isUserAdmin && data.action === 'Add')" (click)="editService()"
+          type="button" mat-raised-button color="accent">
+          <mat-icon>{{!(tempPassenger.ancillaryServices.meals.length > 0) && !(tempPassenger.ancillaryServices.beverages.length > 0) &&
+            !(tempPassenger.ancillaryServices.shoppingItems.length > 0) ? 'add' : 'update'}}</mat-icon>
+          {{!(tempPassenger.ancillaryServices.meals.length > 0) && !(tempPassenger.ancillaryServices.beverages.length > 0) &&
+            !(tempPassenger.ancillaryServices.shoppingItems.length > 0) ? 'Add' : 'Update'}}
+        </button>
+      </div>
+    </div>
+    <div class="form-group">
+      <mat-form-field class="input-full-width col-12">
+        <mat-label>Address</mat-label>
+        <textarea matInput [(ngModel)]="tempPassenger.address" [disabled]=" !data.isUserAdmin"></textarea>
+      </mat-form-field>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button type="button" (click)="actionClick('Save')" mat-raised-button color="primary" class="mr-2" [disabled]="!tempPassenger.firstName || !tempPassenger.lastName ||
+     !tempPassenger.gender || !(tempPassenger.bagCount >= 0) || !tempPassenger.seatNumber">
+    <mat-icon>{{ data.action === 'Update' ? 'update' : 'save' }}</mat-icon>
+    {{ data.action === 'Update' ? 'Update' : 'Save' }}
+  </button>
+  <button type="button" (click)="actionClick('Close')" mat-raised-button color="warn">
+    <mat-icon>cancel</mat-icon>
+    Close
+  </button>
+</mat-dialog-actions>

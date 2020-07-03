@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "flight-management-148ed": {
+      "hosting": {
+        "in-flight-management-app": [
+          "flight-management-148ed"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "flight-management-148ed"
+  }
+}

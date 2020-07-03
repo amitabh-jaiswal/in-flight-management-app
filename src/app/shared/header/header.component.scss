@@ -1,0 +1,36 @@
+.sidenav-container {
+  height: 100%;
+}
+
+.sidenav {
+  width: 200px;
+}
+
+.sidenav .mat-toolbar {
+  background: inherit;
+}
+
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.nav-links {
+  color: #ffffff;
+}
+
+.active-toolbar {
+  color: #3f51b5 !important;
+  background-color: #ffffff !important;
+}
+
+.menu-toolbar-style {
+  font-size: 20px;
+  font-weight: lighter !important;
+}
+
+.main-header {
+  font-size: 24px;
+  font-weight: normal;
+}

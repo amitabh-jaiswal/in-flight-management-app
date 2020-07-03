@@ -1,0 +1,110 @@
+<div class="container-fluid">
+  <div class="row mt-5">
+    <div class="col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
+      <app-flight-select></app-flight-select>
+    </div>
+  </div>
+  <div class="row mt-4" *ngIf="flightInfo">
+    <div class="col-sm-10 col-md-8 col-lg-8 offset-sm-1 offset-md-2 offset-lg-2">
+      <app-card>
+        <div class="row text-center">
+          <div class="col-sm-5">
+            <h2 class="display-2">{{ flightInfo.departureAirport.name | uppercase }} (
+              {{ flightInfo.departureAirport.code }} )</h2>
+            <p>Departure:&nbsp;<span>{{ flightInfo.depScheduled | date: 'MMM d, y h:mm a' }}</span></p>
+            <p>Terminal&nbsp;<span>{{ flightInfo.departureAirport.terminal }}</span></p>
+            <p>Gate&nbsp;<span>{{ flightInfo.departureAirport.gate }}</span></p>
+          </div>
+          <div class="col-sm-2">
+            <mat-icon class="align-items-center" *ngIf="(isHandset$ | async) ===false">arrow_right_alt</mat-icon>
+            <mat-icon *ngIf="isHandset$ | async">arrow_downward</mat-icon>
+          </div>
+          <div class="col-sm-5">
+            <h2 class="display-2">{{ flightInfo.arrivalAirport.name | uppercase }} (
+              {{ flightInfo.arrivalAirport.code }} )</h2>
+            <p>Arrival:&nbsp;<span>{{ flightInfo.arrScheduled | date: 'MMM d, y h:mm a' }}</span></p>
+            <p>Terminal&nbsp;<span>{{ flightInfo.arrivalAirport.terminal }}</span></p>
+          </div>
+        </div>
+      </app-card>
+    </div>
+  </div>
+  <div class="row mt-4 mb-5" *ngIf="!isUserAdmin">
+    <div class="col-sm-10 col-md-8 col-lg-8 col-12 offset-sm-1 offset-md-2 offset-lg-2 offset-0">
+      <app-flight-seat-map></app-flight-seat-map>
+    </div>
+  </div>
+  <div class="row mt-4 mb-5" *ngIf="flightInfo">
+    <div class="col-sm-10 col-md-10 col-lg-10 col-12 offset-sm-1 offset-md-1 offset-lg-1 offset-0 flight-services">
+      <h1 class="mat-subheader display-1">Flight Ancillary Services</h1>
+      <div>
+        <app-card title="Meals">
+          <div class="row" *ngIf="meals && meals.length > 0; else noMeal">
+            <div class="col-sm-3 col-6 mt-2 mb-3" *ngFor="let meal of meals">
+              <app-ancillary-service-card [serviceDetails]="meal" [isAdmin]="isUserAdmin"
+                [isUpdating]="isServiceUpdating" action="REMOVE" [isSelected]="meal.isSelected"
+                (cardSelect)="onSelect(meal, 'MEALS')">
+              </app-ancillary-service-card>
+            </div>
+          </div>
+          <ng-template #noMeal>
+            <div class="row  mt-4 mb-4">
+              <div class="col-12 text-center font-weight-normal">
+                <span class="font-weight-normal" style="font-size: 22px;">{{ noServiceMessage('meal(s)') }}</span>
+              </div>
+            </div>
+          </ng-template>
+        </app-card>
+      </div>
+      <div class="mt-5">
+        <app-card class="mt-4" title="Beverages">
+          <div class="row" *ngIf="beverages && beverages.length > 0; else noBeverage">
+            <div class="col-sm-3 col-6 mt-2 mb-3" *ngFor="let beverage of beverages">
+              <app-ancillary-service-card [serviceDetails]="beverage" [isAdmin]="isUserAdmin"
+                [isUpdating]="isServiceUpdating" action="REMOVE" [isSelected]="beverage.isSelected"
+                (cardSelect)="onSelect(beverage, 'BEVERAGES')">
+              </app-ancillary-service-card>
+            </div>
+          </div>
+          <ng-template #noBeverage>
+            <div class="row  mt-4 mb-4">
+              <div class="col-12 text-center">
+                <span class="font-weight-normal" style="font-size: 22px;">{{ noServiceMessage('beverage(s)') }}</span>
+              </div>
+            </div>
+          </ng-template>
+        </app-card>
+      </div>
+      <div class="mt-5 mb-5">
+        <app-card class="mt-4" title="Shopping Items">
+          <div class="row" *ngIf="shoppingItems && shoppingItems.length > 0; else noShoppingItems">
+            <div class="col-sm-3 col-6 mt-2 mb-3" *ngFor="let item of shoppingItems">
+              <app-ancillary-service-card action="REMOVE" [serviceDetails]="item" [isAdmin]="isUserAdmin"
+                [isUpdating]="isServiceUpdating" [isSelected]="item.isSelected"
+                (cardSelect)="onSelect(item, 'SHOPPING_ITEMS')">
+              </app-ancillary-service-card>
+            </div>
+          </div>
+          <ng-template #noShoppingItems>
+            <div class="row mt-4 mb-4">
+              <div class="col-12 text-center">
+                <span class="font-weight-normal" style="font-size: 22px;">
+                  {{ noServiceMessage('shopping item(s)') }}
+                </span>
+              </div>
+            </div>
+          </ng-template>
+        </app-card>
+      </div>
+      <div class="row" *ngIf="isUserAdmin">
+        <div class="col-12 mb-4">
+          <button *ngIf="!isServiceUpdating" type="button" (click)="addService()" class="mr-2" mat-raised-button
+            color="primary" aria-label="Add Ancillary Services">
+            <mat-icon>edit</mat-icon>
+            Edit Services
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

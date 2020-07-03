@@ -1,0 +1,64 @@
+/* You can add global styles to this file, and also import other style files */
+$error-background: rgb(92, 19, 19);
+$success-background: rgb(25, 66, 25);
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+.spacer {
+  flex: 1 1 auto;
+}
+
+.error-snackbar {
+  background-color: $error-background;
+  color: azure !important;
+}
+
+.success-snackbar {
+  background-color: $success-background;
+  color: azure !important;
+}
+
+.input-full-width {
+  width: 100%;
+}
+
+.flight-details {
+  border: double;
+  border-color: currentColor;
+}
+
+.truncate-heading {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  background: rgba(201, 193, 193, 0.8);
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+::-webkit-scrollbar-thumb:window-inactive {
+background: rgba(44, 43, 43, 0.521);
+}
