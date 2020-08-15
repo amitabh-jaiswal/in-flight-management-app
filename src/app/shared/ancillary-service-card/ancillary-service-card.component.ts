@@ -16,15 +16,22 @@ export class AncillaryServiceCardComponent implements OnInit {
   @Output() cardSelect?: EventEmitter<void> = new EventEmitter<void>();
   @Input() action: ActionType;
   @Input() newPassenger?: boolean;
+  isLoading: boolean;
 
   constructor() { }
 
   ngOnInit(): void {
+    this.isLoading = true;
   }
 
   onSelect() {
     if (this.isUpdating)
       this.cardSelect.emit();
   }
+
+  onLoad() {
+    this.isLoading = false;
+  }
+
 }
 export type ActionType = 'ADD' | 'REMOVE';

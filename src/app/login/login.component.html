@@ -6,7 +6,8 @@
           <div class="form-group">
             <mat-form-field class="input-full-width" appearance="outline">
               <mat-label>Email</mat-label>
-              <input id="email" matInput placeholder="abc@example.com" [errorStateMatcher]="matcher" formControlName="email">
+              <input id="email" matInput placeholder="abc@example.com" [errorStateMatcher]="matcher"
+                formControlName="email">
               <!-- <span *ngIf="email.invalid && (email.dirty || email.touched)"> -->
               <mat-error *ngIf="email.errors && email.errors.required">Email is Required.</mat-error>
               <mat-error *ngIf=" email.errors && email.errors.email">Invalid Email Format.</mat-error>
@@ -27,7 +28,13 @@
               </mat-error>
             </mat-form-field>
           </div>
-          <button type="submit" name="login-button" color="primary" [disabled]="loginForm.invalid" mat-raised-button>Login</button>
+          <button type="submit" name="login-button" color="primary" [disabled]="loginForm.invalid || isLoading"
+            mat-raised-button>
+            <span *ngIf="!isLoading">Login</span>
+            <mat-icon *ngIf="isLoading">
+              <mat-spinner diameter="20"></mat-spinner>
+            </mat-icon>
+          </button>
           <button type="reset" name="reset-button" class="ml-2" color="warn" mat-raised-button>Reset</button>
         </form>
       </app-card>

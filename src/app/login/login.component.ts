@@ -8,6 +8,8 @@ import { AuthRequest } from '../models/auth-request';
 import { map } from 'rxjs/operators';
 import { UserState } from '../store/state/user.state';
 import { Subscription } from 'rxjs';
+import { LoadingState } from '../store/state/loading.state';
+import { AuthLoader } from '../store/actions/loading.action';
 
 @Component({
   selector: 'app-login',
@@ -19,24 +21,19 @@ export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup;
   hide = true;
   matcher: ErrorStateMatchers;
-  loggedSubscribe$: Subscription;
+  isLoading: boolean;
+  private subscriptions$: Subscription[] = [];
 
   constructor(private store: Store<AppState>) { }
 
   ngOnInit(): void {
     this.matcher = new ErrorStateMatchers();
     this._initLoginForm();
-    this.loggedSubscribe$ = this.store.select('user').pipe(
-      map((userData: UserState) => userData.isLoggedIn)
-    ).subscribe((isLoggedIn: boolean) => {
-      if (isLoggedIn)
-        this._initLoginForm();
-    });
+    this._stateSubscribe();
   }
 
   ngOnDestroy() {
-    if (this.loggedSubscribe$)
-      this.loggedSubscribe$.unsubscribe();
+    this.subscriptions$.forEach(subs$ => subs$.unsubscribe());
   }
 
   get email() {
@@ -50,6 +47,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   onSubmit() {
     if (this.loginForm.invalid)
       return;
+    this.store.dispatch(new AuthLoader(true));
     this.store.dispatch(new LoginStart(new AuthRequest(this.email.value, this.password.value)));
   }
 
@@ -58,6 +56,23 @@ export class LoginComponent implements OnInit, OnDestroy {
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required, Validators.minLength(8)])
     });
+  }
+
+  private _stateSubscribe() {
+    this.subscriptions$.push(this.store.select('user').pipe(
+      map((userData: UserState) => userData.isLoggedIn)
+    ).subscribe((isLoggedIn: boolean) => {
+      if (isLoggedIn)
+        this._initLoginForm();
+    }));
+
+    this.subscriptions$.push(this.store.select('loading').pipe(
+      map((state: LoadingState) => state.auth)
+    ).subscribe((isLoading: boolean) => {
+      this.isLoading = isLoading;
+      console.log(this.isLoading);
+    })
+    );
   }
 
 }

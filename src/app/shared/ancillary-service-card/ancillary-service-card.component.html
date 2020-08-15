@@ -1,5 +1,7 @@
 <mat-card style="max-width: 400px;" style="cursor: pointer;" (click)="onSelect()">
-  <img mat-card-image [src]="serviceDetails.image" [alt]="serviceDetails.mealName">
+  <img mat-card-image [hidden]="isLoading" (error)="onLoad()" (load)="onLoad()" [src]="serviceDetails.image"
+    [alt]="serviceDetails.mealName">
+  <mat-spinner class="mt-4 mb-4" style="margin: 0 auto;" *ngIf="isLoading" diameter="40"></mat-spinner>
   <mat-card-content>
     <!-- <mat-card-header> -->
     <mat-card-title [matTooltip]="serviceDetails.mealName ? serviceDetails.mealName : serviceDetails.productName"

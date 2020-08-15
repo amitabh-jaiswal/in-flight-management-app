@@ -40,7 +40,12 @@
                 match.</mat-error>
             </mat-form-field>
           </div>
-          <button type="submit" color="primary" [disabled]="registerForm.invalid" mat-raised-button>SignUp</button>
+          <button type="submit" color="primary" [disabled]="registerForm.invalid || isLoading" mat-raised-button>
+            <span *ngIf="!isLoading">SignUp</span>
+            <mat-icon *ngIf="isLoading">
+              <mat-spinner diameter="20"></mat-spinner>
+            </mat-icon>
+          </button>
           <button type="reset" class="ml-2" color="warn" mat-raised-button>Reset</button>
         </form>
       </app-card>

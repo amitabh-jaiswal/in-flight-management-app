@@ -9,6 +9,8 @@ import { map } from 'rxjs/operators';
 import { group } from '@angular/animations';
 import { SignUpStart } from '../store/actions/auth.actions';
 import { AuthRequest } from '../models/auth-request';
+import { AuthLoader } from '../store/actions/loading.action';
+import { LoadingState } from '../store/state/loading.state';
 
 @Component({
   selector: 'app-register',
@@ -21,24 +23,19 @@ export class RegisterComponent implements OnInit, OnDestroy {
   hide = true;
   confirmHide = true;
   matcher: ErrorStateMatchers;
-  loggedSubscribe$: Subscription;
+  isLoading: boolean;
+  private subscriptions$: Subscription[] = [];
 
   constructor(private store: Store<AppState>, private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
     this.matcher = new ErrorStateMatchers();
     this._initLoginForm();
-    this.loggedSubscribe$ = this.store.select('user').pipe(
-      map((userData: UserState) => userData.isLoggedIn)
-    ).subscribe((isLoggedIn: boolean) => {
-      if (isLoggedIn)
-        this._initLoginForm();
-    });
+    this._stateSubscribe();
   }
 
   ngOnDestroy() {
-    if (this.loggedSubscribe$)
-      this.loggedSubscribe$.unsubscribe();
+    this.subscriptions$.forEach(subs$ => subs$.unsubscribe());
   }
 
   get email() {
@@ -56,6 +53,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   onSubmit() {
     if (this.registerForm.invalid)
       return;
+    this.store.dispatch(new AuthLoader(true));
     this.store.dispatch(new SignUpStart(new AuthRequest(this.email.value, this.password.value)));
   }
 
@@ -68,6 +66,25 @@ export class RegisterComponent implements OnInit, OnDestroy {
       {
         validators: confirmPasswordValidator('password', 'confirmPassword')
       });
+  }
+
+  private _stateSubscribe() {
+    this.subscriptions$.push(
+      this.store.select('user').pipe(
+        map((userData: UserState) => userData.isLoggedIn)
+      ).subscribe((isLoggedIn: boolean) => {
+        if (isLoggedIn)
+          this._initLoginForm();
+      })
+    );
+
+    this.subscriptions$.push(
+      this.store.select('loading').pipe(
+        map((loadingState: LoadingState) => loadingState.auth)
+      ).subscribe((isLoading: boolean) => {
+        this.isLoading = isLoading;
+      })
+    );
   }
 
 }

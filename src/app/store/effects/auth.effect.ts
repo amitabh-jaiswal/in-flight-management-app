@@ -10,6 +10,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuthLoader } from '../actions/loading.action';
 
 @Injectable()
 export class AuthEffect {
@@ -63,22 +64,24 @@ export class AuthEffect {
     })
   );
 
-  @Effect({ dispatch: false })
+  @Effect()
   authSuccess = this.action$.pipe(
     ofType(AuthAction.AUTHENTICATE_SUCCESS),
-    tap((authData: AuthenticateSuccess) => {
+    map((authData: AuthenticateSuccess) => {
       if (authData.payload.redirect)
         this.router.navigate(['/flight']);
+      return new AuthLoader(false);
     })
   );
 
-  @Effect({ dispatch: false })
+  @Effect()
   authFail = this.action$.pipe(
     ofType(AuthAction.AUTHENTICATE_FAIL),
-    tap((authData: AuthenticateFail) => {
+    map((authData: AuthenticateFail) => {
       this.snackbar.open(authData.payload, 'Close', {
         panelClass: 'error-snackbar'
       });
+      return new AuthLoader(false);
     })
   );
 
