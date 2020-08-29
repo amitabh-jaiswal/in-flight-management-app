@@ -38,7 +38,12 @@ export class PassengerService implements OnDestroy {
   }
 
   getFlightPassengers(flightId: number): Observable<Passenger[]> {
-    return this.http.get<Passenger[]>(PASSENGER_DATA.FLIGHT_PASSENGERS_API + flightId);
+    return this.http.get<Passenger[]>(PASSENGER_DATA.FLIGHT_PASSENGERS_API + flightId).pipe(
+      map((response: Passenger[]) => {
+        response.sort((passenger1: Passenger, passenger2: Passenger) => this._sortSeatNumber(passenger1.seatNumber, passenger2.seatNumber));
+        return response;
+      })
+    );
   }
 
   getPassengerInfo(passengerId: number): Observable<Passenger> {
@@ -119,6 +124,29 @@ export class PassengerService implements OnDestroy {
 
   private _rowNumber(seatNumber: string): number {
     return seatNumber.length === 3 ? +seatNumber.substr(0, 2) : +seatNumber.charAt(0);
+  }
+
+  private _columnNumber(seatNumber: string): string {
+    return seatNumber.substr(seatNumber.length - 1);
+  }
+
+  private _sortSeatNumber(a: string, b: string): number {
+    const aRowNumber = this._rowNumber(a);
+    const bRowNumber = this._rowNumber(b);
+    const aColNumber = this._columnNumber(a);
+    const bColNumber = this._columnNumber(b);
+    if (aRowNumber === bRowNumber) {
+      if (aColNumber > bColNumber)
+        return 1;
+      else
+        return -1;
+    }
+    else {
+      if (aRowNumber > bRowNumber)
+        return 1;
+      else
+        return -1;
+    }
   }
 
 }
