@@ -4,11 +4,10 @@
 name: Deploy to Firebase Hosting on merge
 'on':
   pull_request:
+    branches:
+      - "master-firebase"
     types:
       - "closed"
-  push:
-    branches:
-      - master-firebase
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
