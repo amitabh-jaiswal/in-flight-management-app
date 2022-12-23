@@ -22,7 +22,7 @@ const setEnv = () => {
     }
   };
 `;
-  console.log(colors.magenta('The file `environment.ts` will be written with the following content: \n'));
+  console.log(colors.magenta('The file `environment.ts` will be written with the following content: \n', envConfigFile));
   writeFile(targetPath, envConfigFile, (err) => {
     if (err) {
       console.error(err);
