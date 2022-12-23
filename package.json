@@ -5,7 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build:deploy": "ng build --prod",
+    "build:deploy": "npm run config -- --prod&& ng build --prod",
+    "config": "ts-node src/environments/generate-env.ts",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
-  baseUrl: 'https://gocraft.herokuapp.com/',
+  baseUrl: '',
   firebaseConfig: {
-    apiKey: 'AIzaSyCOhJpJ4asVqiGpHjqsAZLy_AWmmnEnSQ8'
+    apiKey: ''
   }
 };
