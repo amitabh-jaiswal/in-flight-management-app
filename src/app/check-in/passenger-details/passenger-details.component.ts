@@ -16,6 +16,7 @@ import { ServiceType } from 'src/app/constant/service-type.enum';
 import { MatDialog } from '@angular/material/dialog';
 import { AddServiceDialogComponent } from '../add-service-dialog/add-service-dialog.component';
 import { AddService } from 'src/app/models/add-service.model';
+import { ToggleLoader } from 'src/app/store/actions/loading.action';
 
 @Component({
   selector: 'app-passenger-details',
@@ -84,6 +85,7 @@ export class PassengerDetailsComponent implements OnInit, OnDestroy {
   }
 
   changeCheckInStatus(isUndoCalled: boolean) {
+    this.store.dispatch(new ToggleLoader({isLoading: true, message: 'Updating Check-in Status....'}));
     if (isUndoCalled)
       this.passenger.checkedIn = false;
     else
@@ -158,8 +160,13 @@ export class PassengerDetailsComponent implements OnInit, OnDestroy {
         }
         if (isServiceUpdate)
           this._fetchAncillaryServices();
-      } else
+      } else {
         this._showMessage('Some Error Occured!!', 'error-snackbar');
+      }
+      this.store.dispatch(new ToggleLoader({isLoading: false}));
+    }, (error: Error) => {
+      this.store.dispatch(new ToggleLoader({isLoading: false}));
+      this._showMessage(error.message, 'error-snackbar');
     });
   }
 

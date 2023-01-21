@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/store/state/app.state';
 import { HttpError } from 'src/app/store/actions/error.action';
 import { Notification } from 'src/app/models/notification.model';
+import { ToggleLoader } from 'src/app/store/actions/loading.action';
 
 @Component({
   selector: 'app-bottom-sheet',
@@ -17,6 +18,8 @@ export class BottomSheetComponent implements OnInit {
 
   passengerData: Passenger;
   changeSeat: boolean;
+  isLoading: boolean;
+  loaderMessage: string;
 
   constructor(
     private bottomSheetRef: MatBottomSheetRef<BottomSheetComponent>,
@@ -29,9 +32,12 @@ export class BottomSheetComponent implements OnInit {
   ngOnInit() {
     this.changeSeat = false;
     this.passengerData = this.data;
+    this.isLoading = false;
+    this.loaderMessage = '';
   }
 
   save() {
+    this._toggleLoader(true, `${!this.passengerData.checkedIn ? 'Checking-in passenger' : 'Undo check-in'}....`);
     this.passengerData.checkedIn = !this.passengerData.checkedIn;
     this.passengerService.updatePassengerInfo(this.passengerData).subscribe((response: Passenger) => {
       if (response) {
@@ -40,15 +46,26 @@ export class BottomSheetComponent implements OnInit {
         this.store.dispatch(new HttpError(
           new Notification(this.passengerData.checkedIn ? checkinMessage : undoMessage, 'HTTP_SUCCESS', 'SUCCESS')
         ));
+        this._toggleLoader(false);
         this.bottomSheetRef.dismiss();
       }
+    },(error: Error) => {
+      this._toggleLoader(false);
+      this.store.dispatch(new HttpError(
+        new Notification(error.message, 'HTTP_ERROR', 'ERROR')
+      ));
     });
   }
 
   showPassengerDetails() {
     this.bottomSheetRef.dismiss();
+    this.store.dispatch(new ToggleLoader({isLoading: true, message: 'Loading Passenger Details.....'}));
     this.router.navigate(['flight/passengers', this.passengerData.id],
       { queryParamsHandling: 'preserve', relativeTo: this.route });
   }
 
+  private _toggleLoader(isLaoding: boolean, message?: string) {
+    this.isLoading = isLaoding
+    this.loaderMessage = message;
+  }
 }
