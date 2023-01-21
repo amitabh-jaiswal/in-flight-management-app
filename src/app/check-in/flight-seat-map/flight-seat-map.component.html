@@ -1,4 +1,5 @@
 <app-card title="Flight Seat Map">
+  <app-loader diameter="40" [is-loading]="isLoading" [message]="loaderMessage"></app-loader>
   <mat-slide-toggle color="primary" [(ngModel)]="showMealMap">Special Meals</mat-slide-toggle>
   <div class="row">
     <div class="col-sm-12 text-center">

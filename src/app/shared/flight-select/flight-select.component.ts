@@ -7,6 +7,9 @@ import { AppState } from 'src/app/store/state/app.state';
 import { Store } from '@ngrx/store';
 import { FetchFlightDetails, ClearFlightDetails } from 'src/app/store/actions/flight.action';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { ToggleLoader } from 'src/app/store/actions/loading.action';
+import { HttpError } from 'src/app/store/actions/error.action';
+import { Notification } from 'src/app/models/notification.model';
 
 @Component({
   selector: 'app-flight-select',
@@ -19,6 +22,7 @@ export class FlightSelectComponent implements OnInit {
   scheduledFlights: ScheduledFlight[];
 
   constructor(
+    private _store: Store<AppState>,
     private flightService: FlightService,
     private router: Router,
     private route: ActivatedRoute
@@ -30,8 +34,13 @@ export class FlightSelectComponent implements OnInit {
   }
 
   private _getScheduledFlights() {
+    this._store.dispatch(new ToggleLoader({ isLoading: true, message: 'Fetching Scheduled Flights....' }));
     this.flightService.getScheduledFlights().subscribe((response: ScheduledFlight[]) => {
       this.scheduledFlights = response;
+      this._store.dispatch(new ToggleLoader({ isLoading: false }));
+    }, (error: Error) => {
+      this._store.dispatch(new HttpError(new Notification(error.message, 'HTTP_ERROR', 'ERROR')));
+      this._store.dispatch(new ToggleLoader({ isLoading: true, message: 'Fetching Scheduled Flights....' }));
     });
   }
 

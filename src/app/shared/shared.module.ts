@@ -11,6 +11,7 @@ import { MaterialModule } from '../material/material.module';
 import { BottomSheetComponent } from './bottom-sheet/bottom-sheet.component';
 import { AncillaryServiceCardComponent } from './ancillary-service-card/ancillary-service-card.component';
 import { PassengerDialogComponent } from './passenger-dialog/passenger-dialog.component';
+import { LoaderComponent } from './loader/loader.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { PassengerDialogComponent } from './passenger-dialog/passenger-dialog.co
     FlightSelectComponent,
     BottomSheetComponent,
     AncillaryServiceCardComponent,
-    PassengerDialogComponent
+    PassengerDialogComponent,
+    LoaderComponent
   ],
   imports: [
     MaterialModule,
@@ -34,7 +36,8 @@ import { PassengerDialogComponent } from './passenger-dialog/passenger-dialog.co
     ReactiveFormsModule,
     FormsModule,
     FlightSelectComponent,
-    AncillaryServiceCardComponent
+    AncillaryServiceCardComponent,
+    LoaderComponent
   ],
   providers: [
     { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { verticalPosition: 'top', duration: 4000 } },

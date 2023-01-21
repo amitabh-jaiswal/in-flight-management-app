@@ -4,9 +4,9 @@
 
 export const environment = {
   production: false,
-  baseUrl: 'http://localhost:3000/',
+  baseUrl: 'https://gocraftapi.cyclic.app/api/',
   firebaseConfig: {
-    apiKey: ''
+    apiKey: 'AIzaSyCOhJpJ4asVqiGpHjqsAZLy_AWmmnEnSQ8'
   }
 };
 

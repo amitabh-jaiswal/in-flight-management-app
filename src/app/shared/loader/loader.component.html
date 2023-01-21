@@ -1,0 +1,7 @@
+<ng-container *ngIf="isLoading">
+  <div class="overlay"></div>
+  <div class="d-flex flex-column align-items-center justify-content-center">
+    <mat-progress-spinner [diameter]="diameter" mode="indeterminate" color="primary"></mat-progress-spinner>
+    <!-- <span *ngIf="message" class="message font-weight-normal">{{message}}</span> -->
+  </div>
+</ng-container>

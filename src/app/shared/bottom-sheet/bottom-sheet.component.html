@@ -1,3 +1,6 @@
+<ng-container *ngIf="isLoading">
+  <app-loader [message]="loaderMessage" [is-loading]="isLoading" diameter="40"></app-loader>
+</ng-container>
 <div class="container-fluid" *ngIf="passengerData">
   <h1 class="display-1">{{ passengerData.firstName + ' ' + passengerData.lastName }}</h1>
   <mat-nav-list>

@@ -18,6 +18,7 @@ import { FilterOptions } from 'src/app/constant/filter-options.enum';
 import { MatDialog } from '@angular/material/dialog';
 import { PassengerDialogComponent } from 'src/app/shared/passenger-dialog/passenger-dialog.component';
 import { MatSort } from '@angular/material/sort';
+import { ToggleLoader } from 'src/app/store/actions/loading.action';
 
 @Component({
   selector: 'app-passenger-list',
@@ -87,6 +88,7 @@ export class PassengerListComponent implements OnInit, OnDestroy {
   }
 
   openBottomSheet(passenger: Passenger, event: Event) {
+    this.store.dispatch(new ToggleLoader({isLoading: true, message: 'Fetching Passenger Details....'}));
     this.router.navigate([passenger.id], { queryParamsHandling: 'preserve', relativeTo: this.route });
   }
 

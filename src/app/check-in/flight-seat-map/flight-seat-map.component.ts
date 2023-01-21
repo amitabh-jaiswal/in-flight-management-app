@@ -10,6 +10,9 @@ import { BottomSheetComponent } from 'src/app/shared/bottom-sheet/bottom-sheet.c
 import { PassengerService } from 'src/app/service/passenger.service';
 import { Passenger } from 'src/app/models/passenger.model';
 import { SeatMapState } from 'src/app/store/state/seat-map.state';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { HttpError } from 'src/app/store/actions/error.action';
+import { Notification } from 'src/app/models/notification.model';
 
 @Component({
   selector: 'app-flight-seat-map',
@@ -22,11 +25,16 @@ export class FlightSeatMapComponent implements OnInit, OnDestroy {
   flightSubs$: Subscription;
   seatMapId: number;
   seatMap: SeatMap;
+  isLoading: boolean;
+  loaderMessage: string;
+  oldFlightId: number;
 
-  constructor(private store: Store<AppState>, private bottomSheet: MatBottomSheet, private passengerService: PassengerService) { }
+  constructor(private store: Store<AppState>, private bottomSheet: MatBottomSheet,
+    private passengerService: PassengerService, private _route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.showMealMap = false;
+    this._isSelectedFlightChanged();
     this._fetchFlightInfo();
   }
 
@@ -36,14 +44,19 @@ export class FlightSeatMapComponent implements OnInit, OnDestroy {
   }
 
   openSheet(seat: Seat) {
+    this.toggleLoader(true, 'Loading....');
     let bottomRef = null;
     if (seat.passengerId) {
       let passenger = new Passenger();
       this.passengerService.getPassengerInfo(seat.passengerId).subscribe((response) => {
         passenger = response;
+        this.toggleLoader(false);
         bottomRef = this.bottomSheet.open(BottomSheetComponent, {
           data: passenger
         });
+      }, (error: Error) => {
+        this.toggleLoader(false);
+        this.store.dispatch(new HttpError(new Notification(error.message, 'HTTP_ERROR', 'ERROR')));
       });
 
     }
@@ -57,7 +70,30 @@ export class FlightSeatMapComponent implements OnInit, OnDestroy {
         this.seatMap = flightDetails;
       else
         this.seatMap = new SeatMap();
+      this.isLoading = false;
+      this.loaderMessage = undefined;
     });
   }
 
+  private _isSelectedFlightChanged() {
+    this._route.queryParamMap.subscribe((queryParam: ParamMap) => {
+      if (queryParam) {
+        const flightId = +queryParam.get('id');
+        if (flightId && flightId !== this.oldFlightId) {
+          this.isLoading = true;
+          this.loaderMessage = 'Fetching Flight Seat Map....';
+          this.oldFlightId = flightId;
+        } else {
+          this.isLoading = false;
+          this.loaderMessage = undefined;
+          this.oldFlightId = undefined;
+        }
+      }
+    });
+  }
+
+  private toggleLoader(isLoading: boolean, message?: string) {
+    this.isLoading = isLoading;
+    this.loaderMessage = message;
+  }
 }

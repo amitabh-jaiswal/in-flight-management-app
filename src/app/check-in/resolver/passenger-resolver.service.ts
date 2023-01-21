@@ -3,12 +3,13 @@ import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Router, Activated
 import { Passenger } from 'src/app/models/passenger.model';
 import { Observable, throwError, of } from 'rxjs';
 import { PassengerService } from 'src/app/service/passenger.service';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/store/state/app.state';
 import { HttpError } from 'src/app/store/actions/error.action';
 import { Notification } from 'src/app/models/notification.model';
+import { ToggleLoader } from 'src/app/store/actions/loading.action';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,14 @@ export class PassengerResolverService implements Resolve<Passenger> {
     | Promise<Passenger> {
     const passengerId = route.params.passengerId;
     return this.passengerService.getPassengerInfo(passengerId).pipe(
+      map((passenger) => {
+        if (passenger) {
+          this.store.dispatch(new ToggleLoader({isLoading: false}));
+        }
+        return passenger;
+      }),
       catchError((error: HttpErrorResponse) => {
+        this.store.dispatch(new ToggleLoader({isLoading: false}));
         return this._handleError(error);
       })
     );
