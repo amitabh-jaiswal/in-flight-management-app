@@ -44,9 +44,9 @@ export class FlightSeatMapComponent implements OnInit, OnDestroy {
   }
 
   openSheet(seat: Seat) {
-    this.toggleLoader(true, 'Loading....');
     let bottomRef = null;
     if (seat.passengerId) {
+      this.toggleLoader(true, 'Loading....');
       let passenger = new Passenger();
       this.passengerService.getPassengerInfo(seat.passengerId).subscribe((response) => {
         passenger = response;
