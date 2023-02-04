@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ofType, Actions, Effect } from '@ngrx/effects';
 
 import { AuthService } from 'src/app/service/auth.service';
-import { AuthAction, LoginStart, AuthenticateSuccess, AuthenticateFail, AutoLogin, SignUpStart, SignupStartV2 } from '../actions/auth.actions';
+import { AuthAction, LoginStart, AuthenticateSuccess, AuthenticateFail, AutoLogin, SignUpStart, SignupV2Start } from '../actions/auth.actions';
 import { switchMap, tap, map, catchError } from 'rxjs/operators';
 import { AuthResponse } from 'src/app/models/auth-response';
 import { User } from 'src/app/models/user.model';
@@ -34,7 +34,7 @@ export class AuthEffect {
         map((response: AuthResponse) => {
           console.log(response);
           return this._handleAuthentication(+response.expiresIn, response.email, response.localId,
-            response.idToken, response.refereshToken);
+            response.idToken, response.refereshToken, response);
         }),
         catchError(error => {
           console.log(error);
@@ -47,7 +47,7 @@ export class AuthEffect {
   @Effect()
   signUpStartV2 = this.action$.pipe(
     ofType(AuthAction.SIGN_UP_START_V2),
-    switchMap((authRequest: SignupStartV2) => {
+    switchMap((authRequest: SignupV2Start) => {
       return this.authService.signupV2(authRequest.payload).pipe(
         tap((response: AuthResponseV2) => {
           this.authService.setLogoutTimer(+response.expiresIn * 1000);
@@ -55,7 +55,7 @@ export class AuthEffect {
         map((response: AuthResponseV2) => {
           console.log(response);
           return this._handleAuthentication(+response.expiresIn, response.email, response.uuid,
-            response.token, response.refreshToken);
+            response.token, response.refreshToken, response);
         }),
         catchError(error => {
           console.log(error);
@@ -69,14 +69,14 @@ export class AuthEffect {
   loginStart = this.action$.pipe(
     ofType(AuthAction.LOGIN_START),
     switchMap((authRequest: LoginStart) => {
-      return this.authService.login(authRequest.payload).pipe(
-        tap((response: AuthResponse) => {
+      return this.authService.loginV2(authRequest.payload).pipe(
+        tap((response: AuthResponseV2) => {
           this.authService.setLogoutTimer(+response.expiresIn * 1000);
         }),
-        map((response: AuthResponse) => {
+        map((response: AuthResponseV2) => {
           console.log(response);
-          return this._handleAuthentication(+response.expiresIn, response.email, response.localId,
-            response.idToken, response.refereshToken);
+          return this._handleAuthentication(+response.expiresIn, response.email, response.uuid,
+            response.token, response.refreshToken, response);
         }),
         catchError(error => {
           console.log(error);
@@ -117,6 +117,7 @@ export class AuthEffect {
         firstName: string;
         lastName: string;
         displayName: string;
+        phone: number;
         _token: string;
         _tokenExpirationDate: string;
         _refereshToken: string;
@@ -124,7 +125,8 @@ export class AuthEffect {
       if (loadedUser) {
         const user: User = new User(loadedUser.id, loadedUser.email, loadedUser.firstName,
           loadedUser.lastName, loadedUser.displayName, loadedUser._token,
-          new Date(loadedUser._tokenExpirationDate), loadedUser._refereshToken, this._isUserAdmin(loadedUser.email));
+          new Date(loadedUser._tokenExpirationDate), loadedUser._refereshToken,
+          this._isUserAdmin(loadedUser.email), loadedUser.phone);
         if (user.token) {
           const expirationDuration =
             new Date(loadedUser._tokenExpirationDate).getTime() -
@@ -147,11 +149,22 @@ export class AuthEffect {
     })
   );
 
-  private _handleAuthentication(expiresIn: number, email: string, id: string, token: string, refereshToken: string) {
+  private _handleAuthentication(expiresIn: number, email: string, id: string, token: string, refereshToken: string, userResp: AuthResponseV2 | AuthResponse) {
     const tokenExpirationDate = new Date(new Date().getTime() + expiresIn * 1000);
-    const user: User = new User(id, email, null, null, null, token, tokenExpirationDate, refereshToken, this._isUserAdmin(email));
+    let phone: number;
+    let firstName: string;
+    let lastName: string;
+    if (!(userResp instanceof AuthResponse)) {
+      phone = userResp.phone
+      firstName = userResp.firstName;
+      lastName = userResp.lastName;
+    }
+    const user: User = new User(id, email, firstName, lastName, null, token, tokenExpirationDate, refereshToken, this._isUserAdmin(email), phone);
     localStorage.setItem('userData', JSON.stringify({
       id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phone: user.phone,
       email: user.email,
       _token: user.token,
       _refereshToken: user.refereshToken,

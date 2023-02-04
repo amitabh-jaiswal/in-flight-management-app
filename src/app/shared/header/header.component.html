@@ -67,7 +67,7 @@
         </button>
         <button class="mr-2 menu-toolbar-style" *ngIf="(isHandset$ | async) ===false && isLoggedIn"
           [routerLinkActive]="'active-toolbar'" mat-button style="cursor: pointer;">
-          <mat-icon>account_circle</mat-icon><span style="font-size: 20px;">{{ user.email }}</span>
+          <mat-icon>account_circle</mat-icon><span style="font-size: 20px;">{{ name }}</span>
         </button>
         <button class="mr-2 menu-toolbar-style" *ngIf="(isHandset$ | async) ===false && isLoggedIn"
           queryParamsHandling="preserve" [routerLinkActiveOptions]="{exact: true}" routerLink="/flight"
