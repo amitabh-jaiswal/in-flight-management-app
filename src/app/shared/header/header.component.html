@@ -16,7 +16,7 @@
         <mat-icon aria-label="Close SideNav Icon" matListIcon>keyboard_backspace</mat-icon>
       </a>
       <a *ngIf="isLoggedIn" mat-list-item style="cursor: pointer;">
-        <span matLine>{{ user.email }}</span>
+        <span matLine>{{ name }}</span>
         <mat-icon matListIcon>account_circle</mat-icon>
       </a>
       <a *ngIf="!isLoggedIn" mat-list-item routerLinkActive="mat-primary" [routerLinkActive]="'active-toolbar'"
