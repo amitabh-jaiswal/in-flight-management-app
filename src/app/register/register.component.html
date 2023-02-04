@@ -1,9 +1,35 @@
 <div class="container-fluid">
   <div class="row mt-5">
-    <div class="col-sm-10 col-md-8 col-lg-4 offset-sm-1 offset-md-2 offset-lg-4">
+    <div class="col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
       <app-card title="Register">
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
           <div class="form-group">
+            <div class="form-row">
+              <mat-form-field class="col-sm-12 col-md-6 col-lg-6" appearance="outline">
+                <mat-label>First Name</mat-label>
+                <input matInput placeholder="FirstName" [errorStateMatcher]="matcher" formControlName="firstName">
+                <!-- <span *ngIf="email.invalid && (email.dirty || email.touched)"> -->
+                <mat-error *ngIf="firstName.errors && firstName.errors.required">First name is required.</mat-error>
+                <!-- </span> -->
+              </mat-form-field>
+              <mat-form-field class="col-sm-12 col-md-6 col-lg-6" appearance="outline">
+                <mat-label>Last Name</mat-label>
+                <input matInput placeholder="LastName" [errorStateMatcher]="matcher" formControlName="lastName">
+                <!-- <span *ngIf="email.invalid && (email.dirty || email.touched)"> -->
+                <mat-error *ngIf="lastName.errors && lastName.errors.required">Last name is required.</mat-error>
+                <!-- </span> -->
+              </mat-form-field>
+            </div>
+            <mat-form-field class="input-full-width" appearance="outline">
+              <mat-label>Phone</mat-label>
+              <input matInput placeholder="abc@example.com" [errorStateMatcher]="matcher"
+                formControlName="phone" (keypress)="onKeyPress($event)">
+              <!-- <span *ngIf="email.invalid && (email.dirty || email.touched)"> -->
+              <mat-error *ngIf="phone.errors && phone.errors.required">Phone number is required.</mat-error>
+              <mat-error *ngIf="phone.errors && (phone.errors.maxlength || phone.errors.minlength)">Phone number must be
+                at least 10 numbers.</mat-error>
+              <!-- </span> -->
+            </mat-form-field>
             <mat-form-field class="input-full-width" appearance="outline">
               <mat-label>Email</mat-label>
               <input matInput placeholder="abc@example.com" [errorStateMatcher]="matcher" formControlName="email">

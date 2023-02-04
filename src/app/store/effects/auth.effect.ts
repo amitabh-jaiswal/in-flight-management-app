@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ofType, Actions, Effect } from '@ngrx/effects';
 
 import { AuthService } from 'src/app/service/auth.service';
-import { AuthAction, LoginStart, AuthenticateSuccess, AuthenticateFail, AutoLogin, SignUpStart } from '../actions/auth.actions';
+import { AuthAction, LoginStart, AuthenticateSuccess, AuthenticateFail, AutoLogin, SignUpStart, SignupStartV2 } from '../actions/auth.actions';
 import { switchMap, tap, map, catchError } from 'rxjs/operators';
 import { AuthResponse } from 'src/app/models/auth-response';
 import { User } from 'src/app/models/user.model';
@@ -11,6 +11,7 @@ import { of } from 'rxjs';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthLoader } from '../actions/loading.action';
+import { AuthResponseV2 } from 'src/app/models/auth-response-v2.model';
 
 @Injectable()
 export class AuthEffect {
@@ -34,6 +35,27 @@ export class AuthEffect {
           console.log(response);
           return this._handleAuthentication(+response.expiresIn, response.email, response.localId,
             response.idToken, response.refereshToken);
+        }),
+        catchError(error => {
+          console.log(error);
+          return this._handleError(error);
+        })
+      );
+    })
+  );
+
+  @Effect()
+  signUpStartV2 = this.action$.pipe(
+    ofType(AuthAction.SIGN_UP_START_V2),
+    switchMap((authRequest: SignupStartV2) => {
+      return this.authService.signupV2(authRequest.payload).pipe(
+        tap((response: AuthResponseV2) => {
+          this.authService.setLogoutTimer(+response.expiresIn * 1000);
+        }),
+        map((response: AuthResponseV2) => {
+          console.log(response);
+          return this._handleAuthentication(+response.expiresIn, response.email, response.uuid,
+            response.token, response.refreshToken);
         }),
         catchError(error => {
           console.log(error);
@@ -139,7 +161,7 @@ export class AuthEffect {
   }
 
   private _handleError(errorRes: HttpErrorResponse) {
-    let errorMessage = 'An unknown error occurred!';
+    let errorMessage = errorRes.error.message || 'An unknown error occurred!';
     if (!errorRes.error || !errorRes.error.error)
       return of(new AuthenticateFail(errorMessage));
     switch (errorRes.error.error.message) {

@@ -5,7 +5,8 @@ const BACKEND_BASE_URL = environment.baseUrl;
 
 export const AUTH = {
   SIGN_IN_API: AUTH_BASE_URL + 'signInWithPassword',
-  SIGN_UP_API: AUTH_BASE_URL + 'signUp'
+  SIGN_UP_API: AUTH_BASE_URL + 'signUp',
+  SIGN_UP_API_V2: BACKEND_BASE_URL + 'v2/auth/signup'
 };
 
 export const FLIGHT_DATA = {
