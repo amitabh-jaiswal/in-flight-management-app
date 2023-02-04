@@ -49,4 +49,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.store.dispatch(new Logout());
   }
 
+  get name() {
+    return this.user.firstName && this.user.lastName ? `${this.user.firstName} ${this.user.lastName}` : this.user.email;
+  }
 }

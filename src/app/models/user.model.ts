@@ -4,6 +4,7 @@ export class User {
   firstName: string;
   lastName: string;
   displayName: string;
+  phone: number;
   private _isAdmin: boolean;
   private _token: string;
   private _tokenExpirationDate: Date;
@@ -18,7 +19,8 @@ export class User {
     token: string,
     tokenExpirationDate: Date,
     refereshToken: string,
-    isAdmin: boolean
+    isAdmin: boolean,
+    phone: number
   ) {
     this.id = id;
     this.email = email;
@@ -29,6 +31,7 @@ export class User {
     this._tokenExpirationDate = tokenExpirationDate;
     this._refereshToken = refereshToken;
     this._isAdmin = isAdmin;
+    this.phone = phone;
   }
 
   get token() {

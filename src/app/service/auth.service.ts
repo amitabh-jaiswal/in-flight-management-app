@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpUrlEncodingCodec } from '@angular/common/http';
 import { AuthRequest } from '../models/auth-request';
 import { AuthResponse } from '../models/auth-response';
 import { Observable } from 'rxjs';
@@ -24,6 +24,17 @@ export class AuthService {
     return this.http.post<AuthResponse>(AUTH.SIGN_IN_API + '?key=' + environment.firebaseConfig.apiKey, requestPayload);
   }
 
+  loginV2(payload: AuthRequest): Observable<AuthResponseV2> {
+    let headers = new HttpHeaders();
+    headers = headers.set('x-api-key', environment.xApiKey);
+    headers = headers.set('Content-Type', 'application/x-www-form-urlencoded');
+    console.info(JSON.stringify(headers));
+    let body = new HttpParams({encoder: new HttpUrlEncodingCodec()});
+    body = body.set('email', payload.email);
+    body = body.set('password', payload.password);
+    return this.http.post<AuthResponseV2>(AUTH.LOGIN_V2_API, body, { headers });
+  }
+
   signup(requestPayload: AuthRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(AUTH.SIGN_UP_API + '?key=' + environment.firebaseConfig.apiKey, requestPayload);
   }
@@ -40,7 +51,7 @@ export class AuthService {
     body = body.set('password', payload.password);
     body = body.set('phone', String(payload.phone));
     body = body.set('roles', payload.roles ? JSON.stringify(payload.roles) : JSON.stringify([]));
-    return this.http.post<AuthResponseV2>(AUTH.SIGN_UP_API_V2, body, { headers });
+    return this.http.post<AuthResponseV2>(AUTH.SIGN_UP_V2_API, body, { headers });
   }
 
   setLogoutTimer(expirationDuration: number) {
@@ -55,5 +66,4 @@ export class AuthService {
       this.tokenExpirationTimer = null;
     }
   }
-
 }

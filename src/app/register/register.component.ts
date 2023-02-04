@@ -7,7 +7,7 @@ import { AppState } from '../store/state/app.state';
 import { UserState } from '../store/state/user.state';
 import { map } from 'rxjs/operators';
 import { group } from '@angular/animations';
-import { SignUpStart, SignupStartV2 } from '../store/actions/auth.actions';
+import { SignUpStart, SignupV2Start } from '../store/actions/auth.actions';
 import { AuthRequest } from '../models/auth-request';
 import { AuthLoader } from '../store/actions/loading.action';
 import { LoadingState } from '../store/state/loading.state';
@@ -67,7 +67,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
       return;
     this.store.dispatch(new AuthLoader(true));
     // this.store.dispatch(new SignUpStart(new AuthRequest(this.email.value, this.password.value)));
-    this.store.dispatch(new SignupStartV2({
+    this.store.dispatch(new SignupV2Start({
       email: this.email.value, firstName: this.firstName.value,
       lastName: this.lastName.value, password: this.password.value,
       phone: this.phone.value, roles: ['FLIGHT_STAFF']
