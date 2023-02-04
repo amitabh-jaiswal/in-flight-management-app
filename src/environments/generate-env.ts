@@ -17,6 +17,7 @@ const setEnv = () => {
   const envConfigFile = `export const environment = {
     production: ${isProd},
     baseUrl: '${isProd ? process.env.BASE_URL : process.env.BASE_URL ? process.env.BASE_URL : 'http://localhost:3000/'}',
+    xApiKey: '${process.env.X_API_KEY}',
     firebaseConfig: {
       apiKey: '${process.env.FIREBASE_API_KEY}'
     }

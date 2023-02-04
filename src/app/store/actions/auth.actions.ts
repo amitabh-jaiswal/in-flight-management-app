@@ -1,10 +1,12 @@
 import { Action } from '@ngrx/store';
 import { AuthRequest } from 'src/app/models/auth-request';
+import { AuthRequestV2 } from 'src/app/models/auth-request-v2.model';
 import { User } from 'src/app/models/user.model';
 
 export enum AuthAction {
   LOGIN_START = '[Auth] Login Start',
   SIGN_UP_START = '[Auth] Signup Start',
+  SIGN_UP_START_V2 = '[Auth] V2 Signup Start',
   AUTHENTICATE_SUCCESS = '[Auth] Login Success',
   AUTHENTICATE_FAIL = '[Auth] Login Fail',
   AUTO_LOGIN = '[Auth] Auto Login',
@@ -19,6 +21,11 @@ export class LoginStart implements Action {
 export class SignUpStart implements Action {
   readonly type = AuthAction.SIGN_UP_START;
   constructor(public payload: AuthRequest) { }
+}
+
+export class SignupStartV2 implements Action {
+  readonly type = AuthAction.SIGN_UP_START_V2;
+  constructor(public payload: AuthRequestV2) { }
 }
 
 export class AuthenticateSuccess implements Action {
@@ -39,5 +46,5 @@ export class Logout implements Action {
   readonly type = AuthAction.LOGOUT;
 }
 
-export type AuthActions = LoginStart | SignUpStart | AuthenticateSuccess
+export type AuthActions = LoginStart | SignUpStart | SignupStartV2 | AuthenticateSuccess
   | AuthenticateFail | AutoLogin | Logout;
