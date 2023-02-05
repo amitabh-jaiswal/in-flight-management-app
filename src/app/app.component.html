@@ -2,3 +2,13 @@
   <app-loader diameter="70" subscribe-loader-state="true"></app-loader>
   <router-outlet></router-outlet>
 </app-header>
+<ng-template #alertDialog>
+  <h2 matDialogTitle>Alert</h2>
+  <mat-dialog-content>
+    <p>A new version of the app is available. Click Update to refresh.</p>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-raised-button matDialogClose color="warn">Close</button>
+    <button mat-raised-button (click)="handleUpdate()" color="primary">Update</button>
+  </mat-dialog-actions>
+</ng-template>

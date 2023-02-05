@@ -21,6 +21,7 @@ export class ResetPasswordComponent implements OnInit {
   continueUrl: string;
   isLoading: boolean;
   showError: boolean;
+  hide: boolean = false;
 
   constructor(private _route: ActivatedRoute, private _authService: AuthService,
     private _snackbar: MatSnackBar, private _router: Router) { }
