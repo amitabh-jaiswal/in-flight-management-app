@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from './store/state/app.state';
 import { AutoLogin } from './store/actions/auth.actions';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { FetchFlightDetails, ClearFlightDetails } from './store/actions/flight.action';
+import { SwUpdate } from '@angular/service-worker';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -12,11 +15,18 @@ import { FetchFlightDetails, ClearFlightDetails } from './store/actions/flight.a
 })
 export class AppComponent implements OnInit {
 
-  constructor(private store: Store<AppState>, private route: ActivatedRoute) { }
+  private subscriptions: Subscription[];
+  private _dialogRef: MatDialogRef<any, any>;
+  @ViewChild('alertDialog', { static: true }) alertDialog!: TemplateRef<any>;
+
+  constructor(private store: Store<AppState>, private route: ActivatedRoute,
+    private _swUpdate: SwUpdate, private _matDialog: MatDialog) { }
 
   ngOnInit() {
+    this.subscriptions = [];
     this.store.dispatch(new AutoLogin());
     this._restoreSelectedFlight();
+    this._subscribeSwUpdate();
   }
 
   private _restoreSelectedFlight() {
@@ -30,4 +40,22 @@ export class AppComponent implements OnInit {
     });
   }
 
+  private _subscribeSwUpdate() {
+    this.subscriptions.push(
+      this._swUpdate.available.subscribe((event) => {
+        this._showUpdateAlert();
+      })
+    );
+  }
+
+  private _showUpdateAlert() {
+    this._dialogRef = this._matDialog.open(this.alertDialog, { hasBackdrop: false });
+  }
+
+  handleUpdate() {
+    this._swUpdate.activateUpdate().then(() => {
+      this._dialogRef.close();
+      document.location.reload();
+    });
+  }
 }
