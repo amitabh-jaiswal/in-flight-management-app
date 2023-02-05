@@ -4,6 +4,8 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { AuthGuard } from './guards/auth.guard';
 import { LoginGuard } from './guards/login.guard';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { EmailActionsComponent } from './email-actions/email-actions.component';
 
 
 const routes: Routes = [
@@ -21,6 +23,16 @@ const routes: Routes = [
     path: 'signup',
     canActivate: [LoginGuard],
     component: RegisterComponent
+  },
+  {
+    path: 'auth/action',
+    canActivate: [LoginGuard],
+    component: EmailActionsComponent
+  },
+  {
+    path: 'reset-password',
+    canActivate: [LoginGuard],
+    component: ResetPasswordComponent
   },
   {
     path: 'flight',

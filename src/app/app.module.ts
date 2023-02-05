@@ -20,12 +20,16 @@ import { ErrorEffect } from './store/effects/error.effect';
 import { SeatMapEffect } from './store/effects/seat-map.effect';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './interceptor/auth.interceptor';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { EmailActionsComponent } from './email-actions/email-actions.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    ResetPasswordComponent,
+    EmailActionsComponent
   ],
   imports: [
     BrowserModule,

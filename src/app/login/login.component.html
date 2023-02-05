@@ -27,6 +27,7 @@
               <mat-error *ngIf=" password.errors && password.errors.minlength">Password should be greater than 8.
               </mat-error>
             </mat-form-field>
+            <a class="float-right" mat-button color="primary" routerLink="/reset-password">Forgot Password?</a>
           </div>
           <button type="submit" name="login-button" color="primary" [disabled]="loginForm.invalid || isLoading"
             mat-raised-button>

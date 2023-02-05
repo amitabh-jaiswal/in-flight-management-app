@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   baseUrl: 'https://gocraftapi.cyclic.app/api/',
+  xApiKey: 'b2cadfba5222143ecefd97de5d7726ab',
   firebaseConfig: {
     apiKey: 'AIzaSyCOhJpJ4asVqiGpHjqsAZLy_AWmmnEnSQ8'
   }
