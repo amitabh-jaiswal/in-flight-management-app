@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from './store/state/app.state';
 import { AutoLogin } from './store/actions/auth.actions';
@@ -13,7 +13,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[];
   private _dialogRef: MatDialogRef<any, any>;
@@ -27,6 +27,10 @@ export class AppComponent implements OnInit {
     this.store.dispatch(new AutoLogin());
     this._restoreSelectedFlight();
     this._subscribeSwUpdate();
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   private _restoreSelectedFlight() {
