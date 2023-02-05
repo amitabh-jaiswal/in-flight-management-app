@@ -29,3 +29,8 @@ export const ANCILLARY_DATA = {
 export const FLIGHT_SEAT_DATA = {
   SEAT_MAP_INFO_API: BACKEND_BASE_URL + 'seatMaps/'
 };
+
+export const ACCOUNT = {
+  SEND_EMAIL: (mode: string) => BACKEND_BASE_URL + `v1/account/send/${mode}/email`,
+  CONFIRM_RESET_EMAIL: (mode: string) => BACKEND_BASE_URL + `v1/account/confirm/${mode}`
+}
