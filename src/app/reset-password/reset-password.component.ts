@@ -82,6 +82,8 @@ export class ResetPasswordComponent implements OnInit {
         this.mode = params.get('mode');
         this.code = params.get('oobCode');
         this.continueUrl = params.get('continueUrl');
+        const url = new URL(this.continueUrl);
+        this.continueUrl = url.pathname
         this._confirmResetPassword();
       }
     });
