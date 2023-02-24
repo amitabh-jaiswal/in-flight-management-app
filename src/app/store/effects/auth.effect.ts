@@ -71,7 +71,7 @@ export class AuthEffect {
     switchMap((authRequest: LoginStart) => {
       return this.authService.loginV2(authRequest.payload).pipe(
         tap((response: AuthResponseV2) => {
-          this.authService.setLogoutTimer(+response.expiresIn * 1000);
+          // this.authService.setLogoutTimer(+response.expiresIn * 1000);
         }),
         map((response: AuthResponseV2) => {
           console.log(response);
@@ -131,7 +131,7 @@ export class AuthEffect {
           const expirationDuration =
             new Date(loadedUser._tokenExpirationDate).getTime() -
             new Date().getTime();
-          this.authService.setLogoutTimer(expirationDuration);
+          // this.authService.setLogoutTimer(expirationDuration);
           return new AuthenticateSuccess({ user, redirect: false });
         }
       }

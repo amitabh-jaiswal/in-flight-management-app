@@ -32,5 +32,7 @@ export const FLIGHT_SEAT_DATA = {
 
 export const ACCOUNT = {
   SEND_EMAIL: (mode: string) => BACKEND_BASE_URL + `v1/account/send/${mode}/email`,
-  CONFIRM_RESET_EMAIL: (mode: string) => BACKEND_BASE_URL + `v1/account/confirm/${mode}`
+  CONFIRM_RESET_EMAIL: (mode: string) => BACKEND_BASE_URL + `v1/account/confirm/${mode}`,
+  SEND_OTP: BACKEND_BASE_URL + `v1/account/send/otp`,
+  CHANGE_PASSWORD: BACKEND_BASE_URL + 'v1/account/update-password'
 }

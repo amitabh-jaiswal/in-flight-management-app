@@ -66,9 +66,12 @@
           <mat-icon>person_add</mat-icon><span style="font-size: 20px;">Sign Up</span>
         </button>
         <button class="mr-2 menu-toolbar-style" *ngIf="(isHandset$ | async) ===false && isLoggedIn"
-          [routerLinkActive]="'active-toolbar'" mat-button style="cursor: pointer;">
+          [routerLinkActive]="'active-toolbar'" mat-button style="cursor: pointer;" [matMenuTriggerFor]="profileMenu">
           <mat-icon>account_circle</mat-icon><span style="font-size: 20px;">{{ name }}</span>
         </button>
+        <mat-menu #profileMenu="matMenu">
+          <button mat-menu-item routerLink="/change-password">Change Password</button>
+        </mat-menu>
         <button class="mr-2 menu-toolbar-style" *ngIf="(isHandset$ | async) ===false && isLoggedIn"
           queryParamsHandling="preserve" [routerLinkActiveOptions]="{exact: true}" routerLink="/flight"
           [routerLinkActive]="'active-toolbar'" mat-button style="cursor: pointer;">

@@ -7,6 +7,7 @@ import { FetchFlightDetails, ClearFlightDetails } from './store/actions/flight.a
 import { SwUpdate } from '@angular/service-worker';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -26,7 +27,9 @@ export class AppComponent implements OnInit, OnDestroy {
     this.subscriptions = [];
     this.store.dispatch(new AutoLogin());
     this._restoreSelectedFlight();
-    this._subscribeSwUpdate();
+    if (!environment.production) {
+      this._subscribeSwUpdate();
+    }
   }
 
   ngOnDestroy() {
