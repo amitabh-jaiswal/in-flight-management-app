@@ -9,3 +9,7 @@ export interface ConfirmResetPasswordResponse {
   email?: string;
   mode?: EmailMode;
 }
+
+export enum OtpType {
+  UPDATE_PASSWORD = 'update-password'
+}

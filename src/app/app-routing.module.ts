@@ -6,6 +6,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { LoginGuard } from './guards/login.guard';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { EmailActionsComponent } from './email-actions/email-actions.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 
 const routes: Routes = [
@@ -33,6 +34,11 @@ const routes: Routes = [
     path: 'reset-password',
     canActivate: [LoginGuard],
     component: ResetPasswordComponent
+  },
+  {
+    path: 'change-password',
+    canActivate: [AuthGuard],
+    component: ChangePasswordComponent
   },
   {
     path: 'flight',

@@ -22,6 +22,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './interceptor/auth.interceptor';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { EmailActionsComponent } from './email-actions/email-actions.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { EmailActionsComponent } from './email-actions/email-actions.component';
     LoginComponent,
     RegisterComponent,
     ResetPasswordComponent,
-    EmailActionsComponent
+    EmailActionsComponent,
+    ChangePasswordComponent
   ],
   imports: [
     BrowserModule,
