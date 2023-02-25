@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "npm run config -- --prod && ng build --prod",
     "build:deploy": "npm run config -- --prod && ng build --prod",
     "config": "ts-node src/environments/generate-env.ts",
     "test": "ng test",
