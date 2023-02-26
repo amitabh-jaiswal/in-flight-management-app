@@ -10,8 +10,10 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { AuthLoader } from '../actions/loading.action';
-import { AuthResponseV2 } from 'src/app/models/auth-response-v2.model';
+import { AuthLoader, ToggleLoader } from '../actions/loading.action';
+import { AuthResponseV2, AuthTokenResponse } from 'src/app/models/auth-response-v2.model';
+import { AppCookieService } from 'src/app/service/app-cookie.service';
+import { GetAccountDetails } from '../actions/user.action';
 
 @Injectable()
 export class AuthEffect {
@@ -20,7 +22,8 @@ export class AuthEffect {
     private action$: Actions,
     private authService: AuthService,
     private router: Router,
-    private snackbar: MatSnackBar
+    private snackbar: MatSnackBar,
+    private _cookieService: AppCookieService
   ) { }
 
   @Effect()
@@ -49,13 +52,15 @@ export class AuthEffect {
     ofType(AuthAction.SIGN_UP_START_V2),
     switchMap((authRequest: SignupV2Start) => {
       return this.authService.signupV2(authRequest.payload).pipe(
-        tap((response: AuthResponseV2) => {
-          this.authService.setLogoutTimer(+response.expiresIn * 1000);
+        tap((response: AuthTokenResponse) => {
+          this.authService.setLogoutTimer(+response.expiresIn);
+          this._cookieService.setToken(response);
         }),
-        map((response: AuthResponseV2) => {
+        map((response: AuthTokenResponse) => {
           console.log(response);
-          return this._handleAuthentication(+response.expiresIn, response.email, response.uuid,
-            response.token, response.refreshToken, response);
+          return new GetAccountDetails(response, true);
+          // return this._handleAuthentication(+response.expiresIn, response.email, response.uuid,
+          //   response.token, response.refreshToken, response);
         }),
         catchError(error => {
           console.log(error);
@@ -69,14 +74,16 @@ export class AuthEffect {
   loginStart = this.action$.pipe(
     ofType(AuthAction.LOGIN_START),
     switchMap((authRequest: LoginStart) => {
-      return this.authService.loginV2(authRequest.payload).pipe(
-        tap((response: AuthResponseV2) => {
-          // this.authService.setLogoutTimer(+response.expiresIn * 1000);
+      return this.authService.token(undefined, authRequest.payload.email, authRequest.payload.password).pipe(
+        tap((response: AuthTokenResponse) => {
+          this.authService.setLogoutTimer(+response.expiresIn);
+          this._cookieService.setToken(response);
         }),
-        map((response: AuthResponseV2) => {
+        map((response: AuthTokenResponse) => {
           console.log(response);
-          return this._handleAuthentication(+response.expiresIn, response.email, response.uuid,
-            response.token, response.refreshToken, response);
+          return new GetAccountDetails(response, true);
+          // return this._handleAuthentication(+response.expiresIn, response.email, response.uuid,
+          //   response.token, response.refreshToken, response);
         }),
         catchError(error => {
           console.log(error);
@@ -90,9 +97,22 @@ export class AuthEffect {
   authSuccess = this.action$.pipe(
     ofType(AuthAction.AUTHENTICATE_SUCCESS),
     map((authData: AuthenticateSuccess) => {
-      if (authData.payload.redirect)
-        this.router.navigate(['/flight']);
-      return new AuthLoader(false);
+      if (authData.payload.redirect) {
+        let path = '/flight';
+        let params = {};
+        if (authData.payload.path) {
+          const url = new URL(`https://test.com${authData.payload.path}`);
+          path = url.pathname;
+          if (url.search) {
+            const searchParams = new URLSearchParams(url.search);
+            searchParams.forEach((value, name) => {
+              params[name] = value
+            });
+          }
+        }
+        this.router.navigate([path], { queryParams: params, queryParamsHandling: 'merge' });
+      }
+      return authData.payload.path ? new ToggleLoader({ isLoading: false }) : new AuthLoader(false);
     })
   );
 
@@ -110,32 +130,13 @@ export class AuthEffect {
   @Effect()
   autoLogin = this.action$.pipe(
     ofType(AuthAction.AUTO_LOGIN),
-    map(() => {
-      const loadedUser: {
-        email: string;
-        id: string;
-        firstName: string;
-        lastName: string;
-        displayName: string;
-        phone: number;
-        _token: string;
-        _tokenExpirationDate: string;
-        _refereshToken: string;
-      } = JSON.parse(localStorage.getItem('userData'));
-      if (loadedUser) {
-        const user: User = new User(loadedUser.id, loadedUser.email, loadedUser.firstName,
-          loadedUser.lastName, loadedUser.displayName, loadedUser._token,
-          new Date(loadedUser._tokenExpirationDate), loadedUser._refereshToken,
-          this._isUserAdmin(loadedUser.email), loadedUser.phone);
-        if (user.token) {
-          const expirationDuration =
-            new Date(loadedUser._tokenExpirationDate).getTime() -
-            new Date().getTime();
-          // this.authService.setLogoutTimer(expirationDuration);
-          return new AuthenticateSuccess({ user, redirect: false });
-        }
+    map((payload: AutoLogin) => {
+      const { token, refreshToken, expiresIn } = this._cookieService.getToken();
+      if (refreshToken && token) {
+        this.authService.setLogoutTimer(expiresIn);
+        return new GetAccountDetails({ token, refreshToken, expiresIn, uid: '' }, true, payload.payload.redirectPath);
       }
-      return { type: 'DUMMY' };
+      return new ToggleLoader({ isLoading: false });
     })
   );
 
@@ -144,13 +145,15 @@ export class AuthEffect {
     ofType(AuthAction.LOGOUT),
     tap(() => {
       this.authService.clearLogoutTimer();
+      this._cookieService.clearToken();
       localStorage.removeItem('userData');
       this.router.navigate(['/login']);
     })
   );
 
   private _handleAuthentication(expiresIn: number, email: string, id: string, token: string, refereshToken: string, userResp: AuthResponseV2 | AuthResponse) {
-    const tokenExpirationDate = new Date(new Date().getTime() + expiresIn * 1000);
+    const tokenExpirationDate = new Date(0);
+    tokenExpirationDate.setUTCSeconds(expiresIn);
     let phone: number;
     let firstName: string;
     let lastName: string;
@@ -159,7 +162,9 @@ export class AuthEffect {
       firstName = userResp.firstName;
       lastName = userResp.lastName;
     }
-    const user: User = new User(id, email, firstName, lastName, null, token, tokenExpirationDate, refereshToken, this._isUserAdmin(email), phone);
+    const user: User = new User(id, email, firstName, lastName, null, token,
+      tokenExpirationDate, refereshToken,
+      this._isUserAdmin(email), phone, expiresIn);
     localStorage.setItem('userData', JSON.stringify({
       id: user.id,
       firstName: user.firstName,
@@ -167,8 +172,9 @@ export class AuthEffect {
       phone: user.phone,
       email: user.email,
       _token: user.token,
-      _refereshToken: user.refereshToken,
-      _tokenExpirationDate: tokenExpirationDate
+      _refreshToken: user.refreshToken,
+      _tokenExpirationDate: tokenExpirationDate,
+      _expiresIn: expiresIn
     }));
     return new AuthenticateSuccess({ user, redirect: true });
   }
@@ -197,5 +203,4 @@ export class AuthEffect {
       return true;
     return false;
   }
-
 }

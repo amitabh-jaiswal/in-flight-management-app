@@ -1,7 +1,7 @@
 import { Action } from '@ngrx/store';
 import { AuthRequest } from 'src/app/models/auth-request';
 import { AuthRequestV2 } from 'src/app/models/auth-request-v2.model';
-import { User } from 'src/app/models/user.model';
+import { LoggedInUser, User } from 'src/app/models/user.model';
 
 export enum AuthAction {
   LOGIN_START = '[Auth] Login Start',
@@ -35,7 +35,7 @@ export class SignupV2Start implements Action {
 
 export class AuthenticateSuccess implements Action {
   readonly type = AuthAction.AUTHENTICATE_SUCCESS;
-  constructor(public payload: { user: User, redirect: boolean }) { }
+  constructor(public payload: { user: User | LoggedInUser, redirect: boolean, path?: string }) { }
 }
 
 export class AuthenticateFail implements Action {
@@ -45,6 +45,7 @@ export class AuthenticateFail implements Action {
 
 export class AutoLogin implements Action {
   readonly type = AuthAction.AUTO_LOGIN;
+  constructor(public payload?: { redirectPath: string }) { }
 }
 
 export class Logout implements Action {

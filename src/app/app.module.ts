@@ -23,6 +23,9 @@ import { AuthInterceptor } from './interceptor/auth.interceptor';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { EmailActionsComponent } from './email-actions/email-actions.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { CookieService } from 'ngx-cookie-service';
+import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
+import { UserEffect } from './store/effects/user.effect';
 
 @NgModule({
   declarations: [
@@ -41,11 +44,13 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
     MaterialModule,
     ReactiveFormsModule,
     StoreModule.forRoot(appReducer),
-    EffectsModule.forRoot([AuthEffect, FlighEffect, ErrorEffect, SeatMapEffect]),
+    EffectsModule.forRoot([AuthEffect, FlighEffect, ErrorEffect, SeatMapEffect, UserEffect]),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    Location, {provide: LocationStrategy, useClass: PathLocationStrategy},
+    CookieService
   ],
   bootstrap: [AppComponent]
 })

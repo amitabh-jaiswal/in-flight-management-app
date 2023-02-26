@@ -54,10 +54,10 @@ export class PassengerListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this._initializeValues();
     this._getPassengersList();
-    this.filteredValues$ = this.filteredInput.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filter(value))
-    );
+    // this.filteredValues$ = this.filteredInput.valueChanges.pipe(
+    //   startWith(''),
+    //   map(value => this._filter(value))
+    // );
     this.dataSource.filterPredicate = (data: Passenger, filterValue: string) => {
       return this._filterPassenger(data, filterValue);
     };
@@ -88,7 +88,7 @@ export class PassengerListComponent implements OnInit, OnDestroy {
   }
 
   openBottomSheet(passenger: Passenger, event: Event) {
-    this.store.dispatch(new ToggleLoader({isLoading: true, message: 'Fetching Passenger Details....'}));
+    this.store.dispatch(new ToggleLoader({ isLoading: true, message: 'Fetching Passenger Details....' }));
     this.router.navigate([passenger.id], { queryParamsHandling: 'preserve', relativeTo: this.route });
   }
 
@@ -169,6 +169,10 @@ export class PassengerListComponent implements OnInit, OnDestroy {
       if (user) {
         this.isUserAdmin = user.isAdmin;
         this.options = this._assignOptionsBasedOntheUserRole();
+        this.filteredValues$ = this.filteredInput.valueChanges.pipe(
+          startWith(''),
+          map(value => this._filter(value))
+        );
       }
       else
         this.isUserAdmin = false;

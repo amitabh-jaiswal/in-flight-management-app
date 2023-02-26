@@ -9,8 +9,12 @@ import { map } from 'rxjs/operators';
 import { group } from '@angular/animations';
 import { SignUpStart, SignupV2Start } from '../store/actions/auth.actions';
 import { AuthRequest } from '../models/auth-request';
-import { AuthLoader } from '../store/actions/loading.action';
+import { AuthLoader, ToggleLoader } from '../store/actions/loading.action';
 import { LoadingState } from '../store/state/loading.state';
+import { AccountService } from '../service/account.service';
+import { SnackbarService } from '../service/snackbar.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -26,7 +30,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
   isLoading: boolean;
   private subscriptions$: Subscription[] = [];
 
-  constructor(private store: Store<AppState>, private formBuilder: FormBuilder) { }
+  constructor(private store: Store<AppState>, private formBuilder: FormBuilder,
+    private _accountService: AccountService, private _snackbar: SnackbarService, private _router: Router) { }
 
   ngOnInit(): void {
     this.matcher = new ErrorStateMatchers();
@@ -65,13 +70,28 @@ export class RegisterComponent implements OnInit, OnDestroy {
   onSubmit() {
     if (this.registerForm.invalid)
       return;
-    this.store.dispatch(new AuthLoader(true));
+    this.store.dispatch(new ToggleLoader({ isLoading: true }));
     // this.store.dispatch(new SignUpStart(new AuthRequest(this.email.value, this.password.value)));
-    this.store.dispatch(new SignupV2Start({
+    // this.store.dispatch(new SignupV2Start({
+    //   email: this.email.value, firstName: this.firstName.value,
+    //   lastName: this.lastName.value, password: this.password.value,
+    //   phone: this.phone.value, roles: ['FLIGHT_STAFF']
+    // }));
+    this._accountService.signupV2({
       email: this.email.value, firstName: this.firstName.value,
       lastName: this.lastName.value, password: this.password.value,
       phone: this.phone.value, roles: ['FLIGHT_STAFF']
-    }));
+    }).subscribe((response) => {
+      if (response.message) {
+        this._snackbar.success(response.message);
+      }
+      this.store.dispatch(new ToggleLoader({ isLoading: false }));
+      this._router.navigate(['/login']);
+    }, (err: Error | HttpErrorResponse) => {
+      const message = err instanceof HttpErrorResponse ? err.error.message : err.message;
+      this._snackbar.error(message);
+      this.store.dispatch(new ToggleLoader({ isLoading: false }));
+    })
   }
 
   onKeyPress(event: any) {
