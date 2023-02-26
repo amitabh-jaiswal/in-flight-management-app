@@ -8,6 +8,8 @@ import { SwUpdate } from '@angular/service-worker';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { ToggleLoader } from './store/actions/loading.action';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -21,13 +23,15 @@ export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('alertDialog', { static: true }) alertDialog!: TemplateRef<any>;
 
   constructor(private store: Store<AppState>, private route: ActivatedRoute,
-    private _swUpdate: SwUpdate, private _matDialog: MatDialog) { }
+    private _swUpdate: SwUpdate, private _matDialog: MatDialog, private _location: Location) { }
 
   ngOnInit() {
     this.subscriptions = [];
-    this.store.dispatch(new AutoLogin());
+    console.log(this._location.path())
+    this.store.dispatch(new ToggleLoader({ isLoading: true }));
+    this.store.dispatch(new AutoLogin({redirectPath: this._location.path()}));
     this._restoreSelectedFlight();
-    if (!environment.production) {
+    if (environment.production) {
       this._subscribeSwUpdate();
     }
   }

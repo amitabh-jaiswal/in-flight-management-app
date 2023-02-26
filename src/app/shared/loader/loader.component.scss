@@ -7,13 +7,14 @@ mat-progress-spinner {
 }
 
 .overlay {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   z-index: 200;
-  backdrop-filter: blur(2px);
+  pointer-events: none;
+  backdrop-filter: blur(3px);
 }
 
 .message {

@@ -1,7 +1,7 @@
-import { User } from '../../models/user.model';
+import { LoggedInUser, User } from '../../models/user.model';
 
 export interface UserState {
-  user: User;
+  user: User | LoggedInUser;
   isLoggedIn: boolean;
 }
 
