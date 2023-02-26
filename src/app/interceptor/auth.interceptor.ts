@@ -12,11 +12,12 @@ import { map, take, exhaustMap } from 'rxjs/operators';
 import { UserState } from '../store/state/user.state';
 import { User } from '../models/user.model';
 import { AUTH } from '../utilities/url';
+import { AppCookieService } from '../service/app-cookie.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor(private store: Store<AppState>) { }
+  constructor(private store: Store<AppState>, private _cookieService: AppCookieService) { }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const url = request.url;
@@ -26,20 +27,30 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   private _addToken(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<undefined>> {
-    return this.store.select('user').pipe(
-      take(1),
-      map((state: UserState) => state.user),
-      exhaustMap((user: User) => {
-        if (!user)
-          return next.handle(request);
-        const cloneReq = request.clone({
-          setHeaders: {
-            Authorization: 'Bearer ' + user.token
-          }
-        });
-        return next.handle(cloneReq);
-      })
-    );
+    const { token } = this._cookieService.getToken();
+    if (!token) {
+      return next.handle(request);
+    }
+    const cloneReq = request.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return next.handle(cloneReq);
+    // return this.store.select('user').pipe(
+    //   take(1),
+    //   map((state: UserState) => state.user),
+    //   exhaustMap((user: User) => {
+    //     if (!user)
+    //       return next.handle(request);
+    //     const cloneReq = request.clone({
+    //       setHeaders: {
+    //         Authorization: 'Bearer ' + user.token
+    //       }
+    //     });
+    //     return next.handle(cloneReq);
+    //   })
+    // );
   }
 
 }
