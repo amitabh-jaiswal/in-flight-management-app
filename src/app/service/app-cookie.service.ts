@@ -57,4 +57,19 @@ export class AppCookieService {
     this.delete(COOKIE.REFRESH);
     this.delete(COOKIE.TOKEN);
   }
+
+  hasTokenExpired(): boolean {
+    const {expiresIn} = this.getToken();
+    if (expiresIn) {
+      const expiredDate = new Date(0);
+      const today = new Date();
+      expiredDate.setUTCSeconds(expiresIn);
+      if (today > expiredDate) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return true;
+  }
 }

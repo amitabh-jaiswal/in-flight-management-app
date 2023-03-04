@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from './store/state/app.state';
 import { AutoLogin } from './store/actions/auth.actions';
@@ -16,7 +16,7 @@ import { Location } from '@angular/common';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private subscriptions: Subscription[];
   private _dialogRef: MatDialogRef<any, any>;
@@ -29,8 +29,11 @@ export class AppComponent implements OnInit, OnDestroy {
     this.subscriptions = [];
     console.log(this._location.path())
     this.store.dispatch(new ToggleLoader({ isLoading: true }));
-    this.store.dispatch(new AutoLogin({redirectPath: this._location.path()}));
+    this.store.dispatch(new AutoLogin({ redirectPath: this._location.path() }));
     this._restoreSelectedFlight();
+  }
+
+  ngAfterViewInit(): void {
     if (environment.production) {
       this._subscribeSwUpdate();
     }
@@ -60,7 +63,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private _showUpdateAlert() {
-    this._dialogRef = this._matDialog.open(this.alertDialog, { hasBackdrop: false });
+    this._dialogRef = this._matDialog.open(this.alertDialog, { hasBackdrop: true, disableClose: true, });
   }
 
   handleUpdate() {

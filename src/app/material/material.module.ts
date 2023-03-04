@@ -28,6 +28,8 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatStepperModule } from '@angular/material/stepper';
 
 
 @NgModule({
@@ -64,7 +66,9 @@ import { MatMenuModule } from '@angular/material/menu';
     MatSlideToggleModule,
     MatSortModule,
     MatProgressSpinnerModule,
-    MatMenuModule
+    MatMenuModule,
+    MatRadioModule,
+    MatStepperModule
   ],
   providers: [
   ]

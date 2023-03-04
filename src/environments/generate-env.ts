@@ -18,6 +18,7 @@ const setEnv = () => {
     production: ${isProd},
     baseUrl: '${isProd ? process.env.BASE_URL : process.env.BASE_URL ? process.env.BASE_URL : 'http://localhost:3000/'}',
     xApiKey: '${process.env.X_API_KEY}',
+    captchaSiteKey: '${process.env.CAPTCHA_SITE_KEY}',
     firebaseConfig: {
       apiKey: '${process.env.FIREBASE_API_KEY}'
     }

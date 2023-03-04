@@ -2,7 +2,7 @@
 # https://github.com/firebase/firebase-tools
 
 name: Deploy to Firebase Hosting on merge
-'on':
+"on":
   pull_request:
     branches:
       - "master-firebase"
@@ -16,15 +16,16 @@ jobs:
       FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
       BASE_URL: ${{ secrets.BASE_URL }}
       X_API_KEY: ${{ secrets.X_API_KEY }}
+      CAPTCHA_SITE_KEY: ${{ secrets.CAPTCHA_SITE_KEY }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - run: FIREBASE_API_KEY=${{ env.FIREBASE_API_KEY }} BASE_URL=${{ env.BASE_URL }} X_API_KEY=${{ env.X_API_KEY }} npm ci && npm run build:deploy
+      - run: FIREBASE_API_KEY=${{ env.FIREBASE_API_KEY }} BASE_URL=${{ env.BASE_URL }} X_API_KEY=${{ env.X_API_KEY }} CAPTCHA_SITE_KEY=${{ env.CAPTCHA_SITE_KEY }} npm ci && npm run build:deploy
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_FLIGHT_MANAGEMENT_148ED }}'
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_FLIGHT_MANAGEMENT_148ED }}"
           channelId: live
           projectId: flight-management-148ed

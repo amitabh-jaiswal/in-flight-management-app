@@ -14,6 +14,7 @@ import { AuthLoader, ToggleLoader } from '../actions/loading.action';
 import { AuthResponseV2, AuthTokenResponse } from 'src/app/models/auth-response-v2.model';
 import { AppCookieService } from 'src/app/service/app-cookie.service';
 import { GetAccountDetails } from '../actions/user.action';
+import { AuthRequest } from 'src/app/models/auth-request';
 
 @Injectable()
 export class AuthEffect {
@@ -74,7 +75,15 @@ export class AuthEffect {
   loginStart = this.action$.pipe(
     ofType(AuthAction.LOGIN_START),
     switchMap((authRequest: LoginStart) => {
-      return this.authService.token(undefined, authRequest.payload.email, authRequest.payload.password).pipe(
+      let phone, code, email, password;
+      if (authRequest.payload instanceof AuthRequest) {
+        email = authRequest.payload.email;
+        password = authRequest.payload.password;
+      } else {
+        phone = authRequest.payload.phone;
+        code = authRequest.payload.code;
+      }
+      return this.authService.token(undefined, email, password, phone, code).pipe(
         tap((response: AuthTokenResponse) => {
           this.authService.setLogoutTimer(+response.expiresIn);
           this._cookieService.setToken(response);
@@ -131,11 +140,14 @@ export class AuthEffect {
   autoLogin = this.action$.pipe(
     ofType(AuthAction.AUTO_LOGIN),
     map((payload: AutoLogin) => {
-      const { token, refreshToken, expiresIn } = this._cookieService.getToken();
-      if (refreshToken && token) {
-        this.authService.setLogoutTimer(expiresIn);
-        return new GetAccountDetails({ token, refreshToken, expiresIn, uid: '' }, true, payload.payload.redirectPath);
+      if (!this._cookieService.hasTokenExpired()) {
+        const { token, refreshToken, expiresIn } = this._cookieService.getToken();
+        if (refreshToken && token) {
+          this.authService.setLogoutTimer(expiresIn);
+          return new GetAccountDetails({ token, refreshToken, expiresIn, uid: '' }, true, payload.payload.redirectPath);
+        }
       }
+      this._cookieService.clearToken();
       return new ToggleLoader({ isLoading: false });
     })
   );
