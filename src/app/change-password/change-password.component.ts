@@ -1,13 +1,13 @@
+import { DOCUMENT } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
+import { RecaptchaLoaderService } from 'ng-recaptcha';
 import { OtpType } from '../models/account.dto.model';
 import { AccountService } from '../service/account.service';
 import { SnackbarService } from '../service/snackbar.service';
-import { AppState } from '../store/state/app.state';
 import { confirmPasswordValidator } from '../validators/error-state-matcher.validator';
 
 @Component({
@@ -28,7 +28,7 @@ export class ChangePasswordComponent implements OnInit {
   timer: string;
 
   constructor(private _formBuilder: FormBuilder, private _message: SnackbarService,
-    private _accountService: AccountService, private _router: Router) { }
+    private _accountService: AccountService, private _router: Router, private _recaptchaLoaderService: RecaptchaLoaderService) { }
 
   ngOnInit(): void {
     this.showOtpButton = true;
@@ -38,7 +38,17 @@ export class ChangePasswordComponent implements OnInit {
     this.confirmHide = true;
     this.matcher = new ErrorStateMatcher();
     this._initForm();
+    
   }
+
+  // ngAfterViewInit() {
+  //   firebase.auth(firebase.initializeApp(environment.firebaseConfig));
+  //   window['recaptchaVerifier'] = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+  //     size: 'normal',
+  //     callback: (response) => this.sendOtpWithCaptcha(response)
+  //   });
+  //   window['recaptchaVerifier'].render();
+  // }
 
   get newPassword() {
     return this.changePasswordForm.controls.newPassword;
@@ -60,13 +70,13 @@ export class ChangePasswordComponent implements OnInit {
     return `Wait for ${this.timer} seconds before re-sending otp`;
   }
 
-  sendOtp(resend: boolean = false) {
-    if (!resend && this.isOtpSent) {
+  sendOtp(captchaToken: string, resend: boolean = false) {
+    if (resend && !this.showOtpButton) {
       this._message.error('OTP is already sent. Please wait for the sometime before resending.');
       return;
     }
     this.isLoading = true;
-    this._accountService.sendOtp(OtpType.UPDATE_PASSWORD).subscribe((response) => {
+    this._accountService.sendOtp(OtpType.UPDATE_PASSWORD, captchaToken).subscribe((response) => {
       this.isOtpSent = true;
       // this.showOtpTimer = setTimeout(() => {this.showOtpButton = true;}, 3000);
       this._showTimer(30);
@@ -77,6 +87,12 @@ export class ChangePasswordComponent implements OnInit {
       this._message.error(message);
       this.isLoading = false;
     });
+  }
+
+  sendOtpWithCaptcha(captchaToken: string) {
+    if (captchaToken) {
+      this.sendOtp(captchaToken, this.isOtpSent);
+    }
   }
 
   handleSubmit() {
@@ -101,7 +117,7 @@ export class ChangePasswordComponent implements OnInit {
   private _initForm() {
     this.changePasswordForm = this._formBuilder.group({
       newPassword: new FormControl('', [Validators.required, Validators.minLength(8)]),
-      confirmPassword: new FormControl('', [Validators.required, Validators.minLength(8)]),
+      confirmPassword: new FormControl('', [Validators.required, Validators.minLength(8)],),
       code: new FormControl('', Validators.required)
     }, {
       validators: confirmPasswordValidator('newPassword', 'confirmPassword')

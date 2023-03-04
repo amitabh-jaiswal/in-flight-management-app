@@ -22,11 +22,16 @@ export class AccountService {
     let body = new HttpParams({ encoder: new HttpUrlEncodingCodec() });
     body = body.set('password', newPassword);
     body = body.set('code', code);
-    return this.http.patch<ApiResponse>(ACCOUNT.CHANGE_PASSWORD, body, { headers });
+    return this.http.patch<ApiResponse>(ACCOUNT.CHANGE_PASSWORD, body, { headers, withCredentials: true });
   }
 
-  sendOtp(otpType: OtpType): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(ACCOUNT.SEND_OTP, { otpType });
+  sendOtp(otpType: OtpType, captchaToken?: string, phone?: string): Observable<ApiResponse> {
+    let headers = new HttpHeaders();
+    if (phone) {
+      headers = headers.set('x-api-key', environment.xApiKey);
+    }
+    return this.http.post<ApiResponse>(ACCOUNT.SEND_OTP, { otpType, captchaToken, phone },
+      { headers, withCredentials: true });
   }
 
   getDetails(): Observable<AuthResponseV2> {

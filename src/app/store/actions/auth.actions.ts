@@ -16,7 +16,7 @@ export enum AuthAction {
 
 export class LoginStart implements Action {
   readonly type = AuthAction.LOGIN_START;
-  constructor(public payload: AuthRequest) { }
+  constructor(public payload: AuthRequest | { phone: string, code: string }) { }
 }
 export class LoginV2Start implements Action {
   readonly type = AuthAction.LOGIN_START;

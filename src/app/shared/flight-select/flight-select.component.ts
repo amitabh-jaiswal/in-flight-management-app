@@ -40,7 +40,7 @@ export class FlightSelectComponent implements OnInit {
       this._store.dispatch(new ToggleLoader({ isLoading: false }));
     }, (error: Error) => {
       this._store.dispatch(new HttpError(new Notification(error.message, 'HTTP_ERROR', 'ERROR')));
-      this._store.dispatch(new ToggleLoader({ isLoading: true, message: 'Fetching Scheduled Flights....' }));
+      this._store.dispatch(new ToggleLoader({ isLoading: false, message: 'Fetching Scheduled Flights....' }));
     });
   }
 
