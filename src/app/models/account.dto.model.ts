@@ -11,5 +11,6 @@ export interface ConfirmResetPasswordResponse {
 }
 
 export enum OtpType {
-  UPDATE_PASSWORD = 'update-password'
+  UPDATE_PASSWORD = 'update-password',
+  PHONE_LOGIN = 'phone-login'
 }

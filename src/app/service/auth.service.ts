@@ -74,20 +74,25 @@ export class AuthService {
     return this.http.post<AuthTokenResponse>(AUTH.SIGN_UP_V2_API, body, { headers });
   }
 
-  token(refreshToken?: string, email?: string, password?: string): Observable<AuthTokenResponse> {
+  token(refreshToken?: string, email?: string, password?: string,
+    phone?: string, code?: string): Observable<AuthTokenResponse> {
     let headers = new HttpHeaders();
     headers = headers.set('x-api-key', environment.xApiKey);
     headers = headers.set('Content-Type', 'application/x-www-form-urlencoded');
     let body = new HttpParams();
-    body = body.set('grantType', refreshToken ? 'refresh_token' : 'password');
     if (refreshToken) {
       body = body.set('refreshToken', refreshToken);
-    }
-    if (email && password) {
+      body = body.set('grantType', 'refresh_token');
+    } else if (email && password) {
+      body = body.set('grantType', 'password');
       body = body.set('email', email);
       body = body.set('password', password);
+    } else if (phone && code) {
+      body = body.set('grantType', 'phone');
+      body = body.set('phone', phone);
+      body = body.set('code', code);
     }
-    return this.http.post<AuthTokenResponse>(AUTH.TOKEN_API, body, { headers });
+    return this.http.post<AuthTokenResponse>(AUTH.TOKEN_API, body, { headers, withCredentials: true });
   }
 
   setLogoutTimer(expiresIn: number) {

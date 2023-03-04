@@ -2,7 +2,15 @@
   <div class="row mt-5">
     <div class="col-sm-10 col-md-8 col-lg-4 offset-sm-1 offset-md-2 offset-lg-4">
       <app-card title="Login">
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="row m-2">
+          <div class="col-12">
+            <mat-radio-group aria-labelledby="Login using" [(ngModel)]="loginOption" (change)="handleOptionChange()">
+              <mat-radio-button color="primary" value="password">Email & Password</mat-radio-button>
+              <mat-radio-button color="warn" class="ml-5" value="phone">Phone</mat-radio-button>
+            </mat-radio-group>
+          </div>
+        </div>
+        <form *ngIf="loginOption === 'password'" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
           <div class="form-group">
             <mat-form-field class="input-full-width" appearance="outline">
               <mat-label>Email</mat-label>
@@ -38,6 +46,71 @@
           </button>
           <button type="reset" name="reset-button" class="ml-2" color="warn" mat-raised-button>Reset</button>
         </form>
+        <ng-container *ngIf="loginOption === 'phone'">
+          <mat-horizontal-stepper linear (selectionChange)="handleStepChange($event)">
+            <!-- icone overrides -->
+            <ng-template matStepperIcon="phone">
+              <mat-icon>call_end</mat-icon>
+            </ng-template>
+            <ng-template matStepperIcon="chat">
+              <mat-icon>forum</mat-icon>
+            </ng-template>
+            <mat-step label="Phone Number" [stepControl]="phoneForm" state="phone" [editable]="!isOtpSent">
+              <form [formGroup]="phoneForm">
+                <div class="form-group">
+                  <mat-form-field class="input-full-width" appearance="outline">
+                    <mat-label>Phone Number</mat-label>
+                    <input id="phone" matInput onlyNumbers formControlName="phone" [errorStateMatcher]="matcher">
+                    <mat-hint>&#9432; Only supports India(+91) numbers</mat-hint>
+                    <mat-error
+                      *ngIf="getControl(phoneForm,'phone').errors && getControl(phoneForm,'phone').errors.required">Phone
+                      number is
+                      required.</mat-error>
+                    <mat-error
+                      *ngIf="getControl(phoneForm,'phone').errors && (getControl(phoneForm,'phone').errors.minlength || getControl(phoneForm,'phone').errors.maxlength)">Phone
+                      number must be of 10 numbers.
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <button class="btn-block" name="phone-login-button" color="warn" [disabled]="phoneForm.invalid"
+                  mat-raised-button (click)=" captcha.reset();captcha.execute()">
+                  <span>Send OTP</span>
+                </button>
+              </form>
+            </mat-step>
+            <mat-step label="OTP" state="chat" id="stepper-otp">
+              <form [formGroup]="otpForm">
+                <div class="form-group">
+                  <div class="form-row">
+                    <mat-form-field class="col-sm-8 col-md-8 col-lg-8" appearance="outline">
+                      <mat-label>OTP</mat-label>
+                      <input id="code" type="number" matInput formControlName="code" [errorStateMatcher]="matcher">
+                      <mat-error
+                        *ngIf="getControl(otpForm,'code').errors && getControl(otpForm,'code').errors.required">OTP is
+                        required.</mat-error>
+                    </mat-form-field>
+                    <div class="col-sm-4 col-md-4 col-lg-4">
+                      <button mat-raised-button class="mt-2" (click)="captcha.reset();captcha.execute()">Re-send
+                        OTP</button>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="btn-block" name="phone-login-button" color="warn"
+                  [disabled]="otpForm.invalid || isLoading" mat-raised-button (click)="onSubmit()">
+                  <span *ngIf="!isLoading">Login</span>
+                  <mat-icon *ngIf="isLoading">
+                    <mat-spinner diameter="20"></mat-spinner>
+                  </mat-icon>
+                </button>
+              </form>
+            </mat-step>
+          </mat-horizontal-stepper>
+          <div class="row">
+            <div class="col-12">
+              <re-captcha size="invisible" #captcha="reCaptcha" (resolved)="$event && sendOtp($event)"></re-captcha>
+            </div>
+          </div>
+        </ng-container>
       </app-card>
     </div>
   </div>

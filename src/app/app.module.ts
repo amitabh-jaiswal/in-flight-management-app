@@ -26,6 +26,8 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
 import { CookieService } from 'ngx-cookie-service';
 import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { UserEffect } from './store/effects/user.effect';
+import { RecaptchaFormsModule, RecaptchaModule, RecaptchaSettings, RecaptchaV3Module, RECAPTCHA_SETTINGS, RECAPTCHA_V3_SITE_KEY } from 'ng-recaptcha';
+import { OnlyNumbersDirective } from './directive/only-numbers.directive';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,8 @@ import { UserEffect } from './store/effects/user.effect';
     RegisterComponent,
     ResetPasswordComponent,
     EmailActionsComponent,
-    ChangePasswordComponent
+    ChangePasswordComponent,
+    OnlyNumbersDirective
   ],
   imports: [
     BrowserModule,
@@ -44,12 +47,15 @@ import { UserEffect } from './store/effects/user.effect';
     MaterialModule,
     ReactiveFormsModule,
     StoreModule.forRoot(appReducer),
+    RecaptchaFormsModule,
+    RecaptchaModule,
     EffectsModule.forRoot([AuthEffect, FlighEffect, ErrorEffect, SeatMapEffect, UserEffect]),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    Location, {provide: LocationStrategy, useClass: PathLocationStrategy},
+    Location, { provide: LocationStrategy, useClass: PathLocationStrategy },
+    { provide: RECAPTCHA_SETTINGS, useValue: { siteKey: environment.captchaSiteKey } as RecaptchaSettings },
     CookieService
   ],
   bootstrap: [AppComponent]
