@@ -84,6 +84,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
     this.store.dispatch(new LoginStart(payload));
   }
+
   handleOptionChange() {
     if (this.loginOption === 'password') {
       // this.phoneForm = null;
@@ -96,6 +97,11 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.phoneForm.reset();
       this.otpForm.reset();
     }
+  }
+
+  changePhoneNumber() {
+    this.isOtpSent = false;
+    this.stepper.previous();
   }
 
   sendOtp(captchaToken: string) {

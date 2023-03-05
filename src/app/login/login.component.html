@@ -55,7 +55,7 @@
             <ng-template matStepperIcon="chat">
               <mat-icon>forum</mat-icon>
             </ng-template>
-            <mat-step label="Phone Number" [stepControl]="phoneForm" state="phone" [editable]="!isOtpSent">
+            <mat-step label="Phone Number" [stepControl]="phoneForm" state="phone">
               <form [formGroup]="phoneForm">
                 <div class="form-group">
                   <mat-form-field class="input-full-width" appearance="outline">
@@ -101,6 +101,10 @@
                   <mat-icon *ngIf="isLoading">
                     <mat-spinner diameter="20"></mat-spinner>
                   </mat-icon>
+                </button>
+                <button type="button" class="btn-block mt-2" name="change-phone-button" mat-raised-button
+                  (click)="changePhoneNumber()">
+                  Change Phone Number
                 </button>
               </form>
             </mat-step>
