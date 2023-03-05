@@ -15,34 +15,45 @@
         <span matLine>Close</span>
         <mat-icon aria-label="Close SideNav Icon" matListIcon>keyboard_backspace</mat-icon>
       </a>
+      <mat-divider *ngIf="isLoggedIn"></mat-divider>
       <a *ngIf="isLoggedIn" mat-list-item style="cursor: pointer;">
         <span matLine>{{ name }}</span>
         <mat-icon matListIcon>account_circle</mat-icon>
       </a>
+      <mat-divider *ngIf="!isLoggedIn"></mat-divider>
       <a *ngIf="!isLoggedIn" mat-list-item routerLinkActive="mat-primary" [routerLinkActive]="'active-toolbar'"
         routerLink="/login" (click)="drawer.toggle()" style="cursor: pointer;">
         <span matLine>Login</span>
-        <mat-icon matListIcon>person</mat-icon>
+        <mat-icon matListIcon>login</mat-icon>
       </a>
+      <mat-divider *ngIf="!isLoggedIn"></mat-divider>
       <a *ngIf="!isLoggedIn" mat-list-item routerLink='/signup' [routerLinkActive]="'active-toolbar'"
         (click)="drawer.toggle()" style="cursor: pointer;">
         <span matLine>Sign Up</span>
         <mat-icon matListIcon>person_add</mat-icon>
       </a>
+      <mat-divider *ngIf="isLoggedIn"></mat-divider>
       <a *ngIf="isLoggedIn" mat-list-item routerLink="/flight" [routerLinkActiveOptions]="{ exact: true }"
         queryParamsHandling="preserve" [routerLinkActive]="'active-toolbar'" (click)="drawer.toggle()"
         style="cursor: pointer;">
         <span matLine>Flight</span>
         <mat-icon matListIcon>flight</mat-icon>
       </a>
+      <mat-divider *ngIf="isLoggedIn"></mat-divider>
       <a *ngIf="isLoggedIn" mat-list-item routerLink="/flight/passengers" [routerLinkActive]="'active-toolbar'"
         queryParamsHandling="preserve" (click)="drawer.toggle()" style="cursor: pointer;">
         <span matLine>Passengers</span>
         <mat-icon matListIcon>people_alt</mat-icon>
       </a>
+      <mat-divider *ngIf="isLoggedIn"></mat-divider>
+      <a *ngIf="isLoggedIn" mat-list-item style="cursor: pointer;" matTooltip="Feature Coming Soon!" matTooltipTouchGestures="on">
+        <span matLine>Manage</span>
+        <mat-icon matListIcon>admin_panel_settings</mat-icon>
+      </a>
+      <mat-divider *ngIf="isLoggedIn"></mat-divider>
       <a *ngIf="isLoggedIn" mat-list-item (click)="logout();drawer.toggle()" style="cursor: pointer;">
         <span matLine>Logout</span>
-        <mat-icon matListIcon>exit_to_app</mat-icon>
+        <mat-icon matListIcon>logout</mat-icon>
       </a>
     </mat-nav-list>
   </mat-sidenav>
@@ -59,7 +70,7 @@
         <span class="spacer"></span>
         <button class="mr-2 menu-toolbar-style" *ngIf="(isHandset$ | async) ===false && !isLoggedIn"
           [routerLinkActive]="'active-toolbar'" routerLink="/login" mat-button style="cursor: pointer;">
-          <mat-icon>person</mat-icon><span class="align-middle" style="font-size: 20px;">Login</span>
+          <mat-icon>login</mat-icon><span class="align-middle" style="font-size: 20px;">Login</span>
         </button>
         <button class="mr-2 menu-toolbar-style" *ngIf="(isHandset$ | async) ===false && !isLoggedIn"
           [routerLinkActive]="'active-toolbar'" routerLink='/signup' mat-button style="cursor: pointer;">
@@ -70,7 +81,9 @@
           <mat-icon>account_circle</mat-icon><span style="font-size: 20px;">{{ name }}</span>
         </button>
         <mat-menu #profileMenu="matMenu">
-          <button mat-menu-item routerLink="/change-password">Change Password</button>
+          <button mat-menu-item matTooltip="Feature Coming Soon!" matTooltipTouchGestures="on">
+            <!-- routerLink="/change-password"> -->
+            Change Password</button>
         </mat-menu>
         <button class="mr-2 menu-toolbar-style" *ngIf="(isHandset$ | async) ===false && isLoggedIn"
           queryParamsHandling="preserve" [routerLinkActiveOptions]="{exact: true}" routerLink="/flight"
@@ -82,9 +95,14 @@
           mat-button style="cursor: pointer;">
           <mat-icon>people_alt</mat-icon><span style="font-size: 20px;">Passengers</span>
         </button>
+        <button class="mr-2 menu-toolbar-style" *ngIf="(isHandset$ | async) ===false && isLoggedIn"
+          queryParamsHandling="preserve" mat-button style="cursor: pointer;" matTooltip="Feature Coming Soon!"
+          matTooltipTouchGestures="on">
+          <mat-icon>admin_panel_settings</mat-icon><span style="font-size: 20px;">Manage</span>
+        </button>
         <button class="mr-2 menu-toolbar-style" *ngIf="(isHandset$ | async) ===false && isLoggedIn" (click)="logout()"
           [routerLinkActive]="'active-toolbar'" mat-button style="cursor: pointer;">
-          <mat-icon>exit_to_app</mat-icon><span>Logout</span>
+          <mat-icon>logout</mat-icon><span>Logout</span>
         </button>
       </mat-toolbar-row>
     </mat-toolbar>
