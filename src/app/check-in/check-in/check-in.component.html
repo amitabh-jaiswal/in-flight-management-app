@@ -38,7 +38,7 @@
     <div class="col-sm-10 col-md-10 col-lg-10 col-12 offset-sm-1 offset-md-1 offset-lg-1 offset-0 flight-services">
       <h1 class="mat-subheader display-1">Flight Ancillary Services</h1>
       <div>
-        <app-card title="Meals">
+        <app-card card-title="Meals">
           <div class="row" *ngIf="meals && meals.length > 0; else noMeal">
             <div class="col-sm-3 col-6 mt-2 mb-3" *ngFor="let meal of meals">
               <app-ancillary-service-card [serviceDetails]="meal" [isAdmin]="isUserAdmin"
@@ -57,7 +57,7 @@
         </app-card>
       </div>
       <div class="mt-5">
-        <app-card class="mt-4" title="Beverages">
+        <app-card class="mt-4" card-title="Beverages">
           <div class="row" *ngIf="beverages && beverages.length > 0; else noBeverage">
             <div class="col-sm-3 col-6 mt-2 mb-3" *ngFor="let beverage of beverages">
               <app-ancillary-service-card [serviceDetails]="beverage" [isAdmin]="isUserAdmin"
@@ -76,7 +76,7 @@
         </app-card>
       </div>
       <div class="mt-5 mb-5">
-        <app-card class="mt-4" title="Shopping Items">
+        <app-card class="mt-4" card-title="Shopping Items">
           <div class="row" *ngIf="shoppingItems && shoppingItems.length > 0; else noShoppingItems">
             <div class="col-sm-3 col-6 mt-2 mb-3" *ngFor="let item of shoppingItems">
               <app-ancillary-service-card action="REMOVE" [serviceDetails]="item" [isAdmin]="isUserAdmin"

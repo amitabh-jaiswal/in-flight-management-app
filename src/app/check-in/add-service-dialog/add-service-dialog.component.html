@@ -65,7 +65,7 @@
   <!-- <div class="row">
     <div class="col-12">
       <div>
-        <app-card title="Meals">
+        <app-card card-title="Meals">
           <div class="row">
             <div class="col-sm-3 col-6 mt-2 mb-3" *ngFor="let meal of meals">
               <app-ancillary-service-card [serviceDetails]="meal" action="ADD" [isAdmin]="data.isAdmin"
@@ -76,7 +76,7 @@
         </app-card>
       </div>
       <div class="mt-5">
-        <app-card class="mt-4" title="Beverages">
+        <app-card class="mt-4" card-title="Beverages">
           <div class="row">
             <div class="col-sm-3 col-6 mt-2 mb-3" *ngFor="let beverage of beverages">
               <app-ancillary-service-card [serviceDetails]="beverage" action="ADD" [isAdmin]="data.isAdmin"
@@ -87,7 +87,7 @@
         </app-card>
       </div>
       <div class="mt-5 mb-5">
-        <app-card class="mt-4" title="Shopping Items">
+        <app-card class="mt-4" card-title="Shopping Items">
           <div class="row">
             <div class="col-sm-3 col-6 mt-2 mb-3" *ngFor="let item of shoppingItems">
               <app-ancillary-service-card [serviceDetails]="item" action="ADD" [isAdmin]="data.isAdmin"

@@ -7,7 +7,7 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class CardComponent implements OnInit {
 
-  @Input() title: string;
+  @Input('card-title') title: string;
   @Input('align-actions') alignActions: 'start' | 'end';
 
   constructor() { }
